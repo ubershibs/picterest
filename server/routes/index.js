@@ -16,5 +16,7 @@ router.post('/auth/github', UserHandler.githubSignin)
 
 
 router.get('/api/pics', BoardHandler.getAllThePics);
+router.post('/api/pics', isAuthenticated, BoardHandler.postPic);
+router.post('/api/pic/:id/like', isAuthenticated, BoardHandler.likePic)
 
 module.exports = router;

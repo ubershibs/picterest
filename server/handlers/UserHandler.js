@@ -9,7 +9,8 @@ var service = {
   isAuthenticated: isAuthenticated,
   createToken: createToken,
   localSignin: localSignin,
-  localSignup: localSignup
+  localSignup: localSignup,
+  githubSignin: githubSignin
 }
 
 module.exports = service;
@@ -123,36 +124,51 @@ function githubSignin(req, res, next) {
 
           // Merge two accounts. Github takes precedence. Email account is deleted.
           if (existingUser) {
-            existingUser.email = localUser.email
+            existingUser.email = localUser.email;
+            existingUser.password = localUser.password;
+
+            localUser.remove();
+
+            existsingUser.save(function() {
+              var token = createToken(existingUser);
+              return res.send({ token: token, user: existingUser });
+            });
+          } else {
+
+            // Link current email account with the Instagram profile information.
+            localUser.authId = body.user.id;
+            localUser.provider = 'github';
+            localUser.username = body.user.username;
+            localUser.accessToken = body.access_token;
+
+            localUser.save(function() {
+              var token = createToken(localUser);
+              res.send({ token: token, user: localUser });
+            });
+
           }
-
-          // Link current email account with the Instagram profile information.
-          localUser.instagramId = body.user.id;
-          localUser.username = body.user.username;
-          localUser.fullName = body.user.full_name;
-          localUser.picture = body.user.profile_picture;
-          localUser.accessToken = body.access_token;
-
-          localUser.save(function() {
-            var token = createToken(localUser);
-            res.send({ token: token, user: localUser });
-          });
-
+        });
+      });
+    } else {
+      // Step 2b. Create a new user account or return an existing one.
+      User.findOne({ instagramId: body.user.id }, function(err, existingUser) {
+        if (existingUser) {
+          var token = createToken(existingUser);
+          return res.send({ token: token, user: existingUser });
         }
-      });
-    });
-  } else {
-    // Step 2b. Create a new user account or return an existing one.
-    User.findOne({ instagramId: body.user.id }, function(err, existingUser) {
-      if (existingUser) {
-        var token = createToken(existingUser);
-        return res.send({ token: token, user: existingUser });
-      }
 
-      var user = new User({
-        instagramId: body.user.id,
-        username: body.user.username,
-        fullName: body.user.full_name,
-        picture: body.user.profile_picture,
-        accessToken: body.access_token
+        var user = new User({
+          authId: body.user.id,
+          provide: 'github',
+          username: body.user.username,
+          accessToken: body.access_token
+        });
+
+        user.save(function() {
+          var token = createToken(user);
+          res.send({ token: token, user: user });
+        });
       });
+    }
+  });
+});
