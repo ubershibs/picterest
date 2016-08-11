@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="bower_components/angular-material/angular-material.css" />
     <!-- endbower -->
     <!-- endbuild -->
-    <!-- build:css(.tmp) styles/main.css -->
+    <!-- builtd:css(.tmp) styles/main.css -->
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,500,700,300,400italic' rel='stylesheet' type='text/css'>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="styles/main.css">
@@ -35,11 +35,8 @@
             All Pics
           </md-button>
           <span flex></span>
-          <md-button class="md-raised animation-target" aria-label="Login" ui-sref="login" ng-click="ctrl.showDialog($event)">
-            Login
-          </md-button>
-          <md-button class="md-fab md-mini" aria-label="Login with Github">
-            <i class="fa fa-github"></i>
+          <span class="menu-text">Sign in using:</span>
+          <md-button class="md-fab md-mini fa fa-github" id="github" aria-label="Login with Github">
           </md-button>
         </div>
       </md-toolbar>

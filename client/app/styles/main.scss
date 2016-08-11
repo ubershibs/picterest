@@ -6,13 +6,17 @@ body {
   height: 100%;
   width: 100%;
 }
-
-.fa {
+#github {
   font-size: 40px !important;
   position: relative;
   margin: auto;
+  padding: 0;
   color: #fff;
   background-color: #00BCD4;
+}
+
+.menu-text {
+  padding: 0 5px;
 }
 
 .main {
