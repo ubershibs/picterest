@@ -6,15 +6,21 @@ body {
   height: 100%;
   width: 100%;
 }
-#github {
-  font-size: 40px !important;
+#github, #twitter {
   position: relative;
-  margin: auto;
+  margin: 0 5px;
   padding: 0;
   color: #fff;
   background-color: #00BCD4;
 }
 
+
+#github {
+  font-size: 36px;
+}
+#twitter {
+  font-size: 30px;
+}
 .menu-text {
   padding: 0 5px;
 }

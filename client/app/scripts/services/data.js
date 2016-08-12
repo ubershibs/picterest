@@ -17,13 +17,18 @@
 
   function DataService($http) {
     var service = {
-      getAllThePics: getAllThePics
+      getAllThePics: getAllThePics,
+      getUserPics: getUserPics
     };
 
     return service;
 
     function getAllThePics() {
       return $http.get('http://localhost:3000/api/pics');
+    }
+
+    function getUserPics(username) {
+      return $http.get('http://localhost:3000/api/pics/' + username);
     }
   }
 })();

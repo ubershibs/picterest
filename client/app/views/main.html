@@ -1,4 +1,4 @@
-<md-card md-whiteframe="10" layout-padding flex-gt-sm="33" flex-sm="50" flex="100" ng-repeat="pic in vm.pics">
+<md-card md-whiteframe="10" ng-hide="vm.pics.length === 0" layout-padding flex-gt-sm="33" flex-sm="50" flex="100" ng-repeat="pic in vm.pics">
   <md-card-title-text>
     <span class="md-headline">{{ pic.title }}</span>
     <span layout="row" layout-align="start center">
@@ -20,6 +20,6 @@
     </span>
   </md-card-title-text>
   <div layout="row" layout-align="center center">
-    <img src="{{ pic.url }}" class="md-card-image" alt="{{ pic.title }}"/>
+    <img ng-src="{{ pic.url }}" class="md-card-image" alt="{{ pic.title }}"/>
   </div>
 </md-card>

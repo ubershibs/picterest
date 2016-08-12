@@ -3,27 +3,28 @@
 
   /**
    * @ngdoc function
-   * @name picterestApp.controller:MainCtrl
+   * @name picterestApp.controller:UserBoardCtrl
    * @description
    * # MainCtrl
    * Controller of the picterestApp
    */
   angular.module('picterestApp')
-    .controller('MainCtrl', MainCtrl);
+    .controller('UserBoardCtrl', UserBoardCtrl);
 
-  MainCtrl.$inject = ['DataService', '$mdToast', '$auth', '$rootScope'];
-  function MainCtrl(DataService, $mdToast, $auth, $rootScope) {
+  UserBoardCtrl.$inject = ['DataService', '$mdToast', '$auth', '$rootScope', '$routeParams'];
+  function UserBoardCtrl(DataService, $mdToast, $auth, $rootScope, $routeParams) {
     var vm = this;
     vm.pics = [];
     vm.user = null;
-    vm.getAllThePics = getAllThePics;
+    vm.poster = $routeParams.username;
+    vm.getUserPics = getUserPics;
     vm.likedThis = likedThis;
     vm.likeThis = likeThis;
     vm.isAuthenicated = isAuthenticated;
 
     (function init() {
       vm.pics = [];
-      vm.getAllThePics();
+      vm.getUserPics(vm.poster);
       if (isAuthenticated()) {
         vm.user = $rootScope.currentUser;
       }
@@ -33,8 +34,8 @@
       return $auth.isAuthenticated();
     }
 
-    function getAllThePics() {
-      DataService.getAllThePics()
+    function getUserPics(poster) {
+      DataService.getUserPics(poster)
         .then(function(result) {
           vm.pics = result.data;
         }, function(error) {

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <base href="/">
     <title>Picterest by Luke Walker</title>
-    <meta name="description" content="Picterest, a Pinterest Cloe by Luke Walker">
+    <meta name="description" content="Picterest, a Pinterest Clone by Luke Walker">
     <meta name="author" content="Luke Walker">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
@@ -26,7 +26,7 @@
 
     <!-- Add your site or application content here -->
     <div layout="column" layout-fill>
-      <md-toolbar ng-controller="AnimationCtrl as ctrl">
+      <md-toolbar ng-controller="NavigationCtrl as ctrl">
         <div class="md-toolbar-tools">
           <h1>
             <span>Picterest</span>
@@ -35,15 +35,29 @@
             All Pics
           </md-button>
           <span flex></span>
-          <span class="menu-text">Sign in using:</span>
-          <md-button class="md-fab md-mini fa fa-github" id="github" aria-label="Login with Github">
-          </md-button>
+          <span ng-hide="ctrl.isAuthenticated">
+            <span class="menu-text">Sign in using:</span>
+            <md-button class="md-fab md-mini fa fa-github" id="github" aria-label="Sign in with Github" ng-click="ctrl.authenticate('github')">
+              <md-tooltip>Sign in with Github</md-tooltip>
+            </md-button>
+            <md-button class="md-fab md-mini fa fa-twitter" id="twitter" aria-label="Sign in with Twitter" ng-click="ctrl.authenticate('twitter')">
+              <md-tooltip>Sign in wih Twitter</md-tooltip>
+            </md-button>
+          </span>
+          <span ng-show="ctrl.isAuthenticated">
+            <md-button class="md-raised md-accent" id="mypics" aria-label="My Pics" ng-href="/{{ vm.user.username }}">
+              My Pics
+            </md-button>
+            <md-button id="signout" aria-label="Sign Out" ng-click="ctrl.logout()">
+              Sign Out
+            </md-button>
+          </span>
         </div>
       </md-toolbar>
       <md-content layout-gt-xs="row" layout="col" class="main">
-       <div ng-view layout="row" flex layout-align="start start">
+        <div ng-view layout="row" flex layout-align="start start">
 
-       </div>
+        </div>
       </md-content>
     </div>
 
@@ -76,10 +90,9 @@
         <script src="https://use.fontawesome.com/9cbd10f37a.js"></script>
         <script src="scripts/app.js"></script>
         <script src="scripts/services/data.js"></script>
+        <script src="scripts/services/user.js"></script>
         <script src="scripts/controllers/main.js"></script>
-        <script src="scripts/controllers/about.js"></script>
-        <script src="scripts/controllers/animation.js"></script>
-        <script src="scripts/controllers/login.js"></script>
+        <script src="scripts/controllers/navigation.js"></script>
         <!-- endbuild -->
 </body>
 </html>

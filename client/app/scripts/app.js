@@ -35,15 +35,10 @@
         controller: 'MainCtrl',
         controllerAs: 'vm'
       })
-      .when('/about', {
-        templateUrl: 'views/about.html',
-        controller: 'AboutCtrl',
-        controllerAs: 'about'
-      })
-      .when('/login', {
-        templateUrl: 'views/login.html',
-        controller: 'LoginCtrl',
-        controllerAs: 'login'
+      .when('/user/:username', {
+        templateUrl: 'views/main.html',
+        controller: 'UserBoartCtrl',
+        controllerAs: 'vm'
       })
       .otherwise({
         redirectTo: '/'
@@ -56,14 +51,23 @@
       url: 'http://localhost:3000/auth/github'
     });
 
-    $authProvider.httpInterceptor = true;
+    $authProvider.twitter({
+      url: 'http://localhost:3000/auth/twitter',
+      clientId: 'RnYWR4G2LtQd5frxR9iymU4CR',
+      redirectUri: 'http://localhost:9000/',
+      responseType: 'token'
+    });
 
+    $authProvider.httpInterceptor = true;
   }
 
   runFn.$inject = ['$rootScope', '$window', '$auth'];
   function runFn($rootScope, $window, $auth) {
     if ($auth.isAuthenticated()) {
-      $rootScope.currentUser = JSON.parse($window.localStorage.currentUser);
+
+      var payload = $auth.getPayload();
+      $rootScope.currentUser = payload.sub;
+
     }
   }
 
