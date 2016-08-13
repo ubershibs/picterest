@@ -25,28 +25,30 @@ function allPics(req, res, next) {
 };
 
 function postPic(req, res, next) {
-  var user = req.body.user;
-  var url = req.body.url;
+  var user = req.user;
+  var image = req.body.image;
   var title = req.body.title;
-
-  Pic.find({ url: url }).exec(function(err, result) {
-    if (result) {
-      Pic.findOneAndUpdate({ _id: result._id }, { $push: { "posters": user}}).exec(function(err, resut) {
-        if (err) { return next(err); }
-        res.status(200).json({'message': 'Image already exists in our DB. You have been added as a poster, but your title has been discarded.'});
-      });
+  Pic.findOne({ url: image }).populate('posters').exec(function(err, result) {
+    if (result !== null) {
+      if (result.posters.indexOf(req.user) !== -1) {
+        res.status(403).json({'message': 'You have already posted or reposted this image'});
+      } else if (result.posters.indexOf(req.user) === -1) {
+        Pic.update({ _id: result._id}, { $push: { "posters": user }}, { new: true }).exec(function(err,result) {
+          if (err) { return next(err); }
+          res.status(200).json(result);
+        });
+      }
     } else {
       var pic = new Pic({
-        url: url,
-        title: title,
-        posters: [user]
+        url: image,
+        title: title
       });
-      pic.save(function(err, result) {
-        if (err) { return next(err); }
-        res.status(200).json(result);
-      })
+      pic.posters.push(user);
+      pic.save(function() {
+        res.status(200).json(pic);
+      });
     }
-  })
+  });
 };
 
 function likePic(req, res, next) {

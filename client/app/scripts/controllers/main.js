@@ -11,8 +11,8 @@
   angular.module('picterestApp')
     .controller('MainCtrl', MainCtrl);
 
-  MainCtrl.$inject = ['DataService', '$mdToast', '$auth', '$rootScope'];
-  function MainCtrl(DataService, $mdToast, $auth, $rootScope) {
+  MainCtrl.$inject = ['DataService', '$mdToast', '$auth', '$rootScope', '$scope'];
+  function MainCtrl(DataService, $mdToast, $auth, $rootScope, $scope) {
     var vm = this;
     vm.pics = [];
     vm.user = null;
@@ -20,6 +20,7 @@
     vm.likedThis = likedThis;
     vm.likeThis = likeThis;
     vm.isAuthenicated = isAuthenticated;
+    vm.showToast = showToast;
 
     (function init() {
       vm.pics = [];
@@ -29,6 +30,26 @@
       }
     })();
 
+    $scope.$watch(function() { return DataService.getCurrentPics(); }, function(newValue, oldValue) {
+      if (newValue != null) {
+        vm.pics = newValue;
+      }
+    });
+
+    $scope.$watch(function() { return DataService.getStatusMessage(); }, function(newValue, oldValue) {
+      if (newValue != null) {
+        vm.showToast(newValue);
+      }
+    });
+
+    function showToast(message) {
+      $mdToast.show(
+        $mdToast.simple()
+          .textContent(message)
+          .hideDelay(5000)
+      );
+    }
+
     function isAuthenticated() {
       return $auth.isAuthenticated();
     }
@@ -36,14 +57,15 @@
     function getAllThePics() {
       DataService.getAllThePics()
         .then(function(result) {
+          console.log(result.data);
           vm.pics = result.data;
         }, function(error) {
-          console.log(error);
+          console.log('err: ' + JSON.stringify(error));
         } );
     }
 
     function likedThis(pic) {
-      if (vm.user && pic.likers.indexOf(vm.user._id) !== -1) {
+      if (pic.likers && pic.likers.indexOf(vm.user._id) !== -1) {
         return true;
       } else {
         return false;

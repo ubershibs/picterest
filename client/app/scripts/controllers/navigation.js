@@ -17,7 +17,9 @@
     vm.disableParentScroll = false;
 
     (function init() {
-      vm.user = JSON.parse($window.localStorage.currentUser);
+      if (vm.isAuthenticated) {
+        vm.user = JSON.parse($window.localStorage.currentUser);
+      }
     })();
 
     function authenticate(provider) {
@@ -33,6 +35,9 @@
 
     function logout() {
       $auth.logout();
+      $window.localStorage.removeItem('currentUser');
+      $rootScope.currentUser = null;
+      vm.isAuthenticated = $auth.isAuthenticated();
     }
 
     function addPicModal() {
@@ -66,9 +71,6 @@
 
     function savePic(image, title) {
       DataService.savePic(image, title).then(function(result) {
-        if (result.message) {
-          console.log(result.message);
-        }
         closeDialog();
       });
     }

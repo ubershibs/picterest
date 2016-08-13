@@ -6,7 +6,7 @@ body {
   height: 100%;
   width: 100%;
 }
-#github, #twitter {
+#github, #twitter, #addpic {
   position: relative;
   margin: 0 5px;
   padding: 0;
@@ -14,13 +14,18 @@ body {
   background-color: #00BCD4;
 }
 
-
 #github {
   font-size: 36px;
 }
+
 #twitter {
   font-size: 30px;
 }
+
+#addpic {
+  font-size: 30px;
+}
+
 .menu-text {
   padding: 0 5px;
 }
@@ -67,8 +72,8 @@ body {
 
 #addPicImage {
   display: block;
-  max-height: 90%;
-  max-width: 100%;
+  max-height: 720px;
+  max-width: 720px;
   width: auto;
   height: auto;
   margin: 5px;

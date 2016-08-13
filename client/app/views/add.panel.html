@@ -19,7 +19,7 @@
       <input id="imgTitle" ng-model="imgTitle">
     </div>
     <div layout="row">
-      <md-button flex class="md-accent add-dialog-button" ng-click="ctrl.savePic()">
+      <md-button flex class="md-accent add-dialog-button" ng-click="ctrl.savePic(imgSrc, imgTitle)">
         Save
       </md-button>
       <md-button class="md-warn" flex="25" ng-click="ctrl.closeDialog()">

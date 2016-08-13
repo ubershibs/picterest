@@ -55,7 +55,6 @@ function createToken(user) {
 
 // Signs a user in via Github and creates or returns an account
 function githubSignin(req, res, next) {
-  console.log("Github sigin request received");
   var accessTokenUrl = 'https://github.com/login/oauth/access_token';
   var userProfileUrl = 'https://api.github.com/user';
 
@@ -70,10 +69,8 @@ function githubSignin(req, res, next) {
   // Step 1. Exchange authorization code for access token.
   request.post({ url: accessTokenUrl, form: params, json: true }, function(error, response, body) {
     var access_token = body.access_token;
-    console.log("Access token returned: " + access_token);
     request.get({ url: userProfileUrl + '?access_token=' + access_token, headers: { 'User-Agent': 'ubershibs picterest' }}, function(error, response, getBody) {
       var parsedBody = JSON.parse(getBody);
-      console.log("Github user found: " + getBody);
 
       var user = {
         githubId: parsedBody.id,
@@ -87,7 +84,6 @@ function githubSignin(req, res, next) {
       var options = { upsert: true, new: true };
 
       User.findOneAndUpdate(query, user, options).exec(function(err, result) {
-        console.log("Updated user: " + result._id);
         var token = createToken(result);
         res.send({ token: token, user: result });
       });

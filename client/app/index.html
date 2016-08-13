@@ -31,7 +31,7 @@
           <h1>
             <span>Picterest</span>
           </h1>
-          <md-button ui-sref="home">
+          <md-button href="/">
             All Pics
           </md-button>
           <span flex></span>
@@ -48,7 +48,7 @@
             <md-button class="md-fab md-mini fa fa-plus-circle" id="addpic" aria-label="Add a picture" ng-click="ctrl.addPicModal($event)">
               <md-tooltip>Add a new picture</md-tooltip>
             </md-button>
-            <md-button class="md-raised md-accent" id="mypics" aria-label="My Pics" ng-href="/user/{{ ctrl.user.username }}">
+            <md-button class="md-accent md-raised" id="mypics" aria-label="My Pics" ng-href="/user/{{ ctrl.user.username }}">
               My Pics
             </md-button>
             <md-button id="signout" aria-label="Sign Out" ng-click="ctrl.logout()">
