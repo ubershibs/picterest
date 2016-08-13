@@ -1,0 +1,31 @@
+<div role="dialog" aria-label="Add a picture" layout="column" layout-align="center center">
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <h2>Add a picture</h2>
+    </div>
+  </md-toolbar>
+  <div class="add-dialog-content">
+    <div layout="row" >
+      <img ng-show="imgSrc" id="addPicImage" flex alt="Your Picture" ng-src="{{ imgSrc }}">
+    </div>
+  </div>
+  <div layout="column" class="add-dialog-content">
+    <div layout="row" class="container">
+      <label for="imgSrc">Image URL</label>
+      <input id="imgSrc" ng-model="imgSrc">
+    </div>
+    <div layout="row" class="container">
+      <label for="imgTitle">Title</label>
+      <input id="imgTitle" ng-model="imgTitle">
+    </div>
+    <div layout="row">
+      <md-button flex class="md-accent add-dialog-button" ng-click="ctrl.savePic()">
+        Save
+      </md-button>
+      <md-button class="md-warn" flex="25" ng-click="ctrl.closeDialog()">
+        Cancel
+      </md-button>
+    </div>
+
+  </div>
+</div>

@@ -13,12 +13,13 @@
     .module('picterestApp')
     .factory('DataService', DataService);
 
-  DataService.$inject = ['$http'];
+  DataService.$inject = ['$http', '$rootScope'];
 
-  function DataService($http) {
+  function DataService($http, $rootScope) {
     var service = {
       getAllThePics: getAllThePics,
-      getUserPics: getUserPics
+      getUserPics: getUserPics,
+      savePic: savePic
     };
 
     return service;
@@ -29,6 +30,16 @@
 
     function getUserPics(username) {
       return $http.get('http://localhost:3000/api/pics/' + username);
+    }
+
+    function savePic(image, title) {
+      var user = $rootScope.currentUser._id;
+      var body = {
+        image: image,
+        title: title,
+        user: user
+      };
+      return $http.post('http://localhost:3000/api/pics', body);
     }
   }
 })();

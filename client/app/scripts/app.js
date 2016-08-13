@@ -37,7 +37,7 @@
       })
       .when('/user/:username', {
         templateUrl: 'views/main.html',
-        controller: 'UserBoartCtrl',
+        controller: 'UserBoardCtrl',
         controllerAs: 'vm'
       })
       .otherwise({
@@ -59,6 +59,7 @@
     });
 
     $authProvider.httpInterceptor = true;
+
   }
 
   runFn.$inject = ['$rootScope', '$window', '$auth'];

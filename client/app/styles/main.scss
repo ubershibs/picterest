@@ -31,26 +31,27 @@ body {
   position: relative;
   background-color: #666666;
 }
-.demo-md-panel {
-  min-height: 500px;
-}
-.demo-dialog-example {
+
+.addPicDialog {
   background: white;
   border-radius: 4px;
   box-shadow: 0 7px 8px -4px rgba(0, 0, 0, 0.2),
       0 13px 19px 2px rgba(0, 0, 0, 0.14),
       0 5px 24px 4px rgba(0, 0, 0, 0.12);
-  width: 500px;
+  width: 750px;
+  max-height: 100%;
 }
-.demo-dialog-content {
+@media only screen and (max-width: 749px) {
+  .demo-dialog-example {
+    width: 500px;
+  }
+}
+
+.add-dialog-content {
   padding: 0 15px;
   width: 100%;
 }
-.demo-dialog-content img {
-  height: 300px;
-  margin: auto;
-}
-.demo-dialog-button {
+.add-dialog-button {
   width: 100%;
 }
 .demo-dialog-custom-animation-open {
@@ -62,4 +63,32 @@ body {
   opacity: 0;
   transition: all 1s linear, opacity 1ms;
   transform: rotate(0deg);
+}
+
+#addPicImage {
+  display: block;
+  max-height: 90%;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  margin: 5px;
+}
+
+@media only screen and (max-width: 749px) {
+  #addPicImage {
+    max-width: 450px;
+  }
+}
+
+.container > label {
+  width: 100px;
+  text-align: right;
+  padding: 10px;
+}
+
+.container > input {
+  border: none;
+  border-bottom: 1px solid gray;
+  max-width: 100%;
+  width: 500px;
 }

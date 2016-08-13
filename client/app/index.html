@@ -25,8 +25,8 @@
     <![endif]-->
 
     <!-- Add your site or application content here -->
-    <div layout="column" layout-fill>
-      <md-toolbar ng-controller="NavigationCtrl as ctrl">
+    <div layout="column" layout-fill ng-controller="NavigationCtrl as ctrl">
+      <md-toolbar>
         <div class="md-toolbar-tools">
           <h1>
             <span>Picterest</span>
@@ -45,7 +45,10 @@
             </md-button>
           </span>
           <span ng-show="ctrl.isAuthenticated">
-            <md-button class="md-raised md-accent" id="mypics" aria-label="My Pics" ng-href="/{{ vm.user.username }}">
+            <md-button class="md-fab md-mini fa fa-plus-circle" id="addpic" aria-label="Add a picture" ng-click="ctrl.addPicModal($event)">
+              <md-tooltip>Add a new picture</md-tooltip>
+            </md-button>
+            <md-button class="md-raised md-accent" id="mypics" aria-label="My Pics" ng-href="/user/{{ ctrl.user.username }}">
               My Pics
             </md-button>
             <md-button id="signout" aria-label="Sign Out" ng-click="ctrl.logout()">
@@ -55,6 +58,7 @@
         </div>
       </md-toolbar>
       <md-content layout-gt-xs="row" layout="col" class="main">
+        <flash-message></flash-message>
         <div ng-view layout="row" flex layout-align="start start">
 
         </div>
@@ -93,6 +97,7 @@
         <script src="scripts/services/user.js"></script>
         <script src="scripts/controllers/main.js"></script>
         <script src="scripts/controllers/navigation.js"></script>
+        <script src="scripts/controllers/userboard.js"></script>
         <!-- endbuild -->
 </body>
 </html>
