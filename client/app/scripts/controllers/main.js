@@ -11,22 +11,25 @@
   angular.module('picterestApp')
     .controller('MainCtrl', MainCtrl);
 
-  MainCtrl.$inject = ['DataService', '$mdToast', '$auth', '$rootScope', '$scope'];
-  function MainCtrl(DataService, $mdToast, $auth, $rootScope, $scope) {
+  MainCtrl.$inject = ['DataService', '$mdToast', '$auth', '$window', '$scope'];
+  function MainCtrl(DataService, $mdToast, $auth, $window, $scope) {
     var vm = this;
     vm.pics = [];
     vm.user = null;
+    vm.title = 'All Users\' Pics';
     vm.getAllThePics = getAllThePics;
     vm.likedThis = likedThis;
     vm.likeThis = likeThis;
     vm.isAuthenicated = isAuthenticated;
     vm.showToast = showToast;
+    vm.isOwnPage = false;
+    vm.unlikeThis = unlikeThis;
 
     (function init() {
       vm.pics = [];
       vm.getAllThePics();
       if (isAuthenticated()) {
-        vm.user = $rootScope.currentUser;
+        vm.user = JSON.parse($window.localStorage.currentUser);
       }
     })();
 
@@ -48,6 +51,7 @@
           .textContent(message)
           .hideDelay(5000)
       );
+      DataService.clearStatusMessage();
     }
 
     function isAuthenticated() {
@@ -57,24 +61,30 @@
     function getAllThePics() {
       DataService.getAllThePics()
         .then(function(result) {
-          console.log(result.data);
-          vm.pics = result.data;
+          vm.pics = result;
         }, function(error) {
-          console.log('err: ' + JSON.stringify(error));
         } );
     }
 
     function likedThis(pic) {
-      if (pic.likers && pic.likers.indexOf(vm.user._id) !== -1) {
-        return true;
-      } else {
-        return false;
+      if (vm.user) {
+        if (pic.likers && pic.likers.indexOf(vm.user._id) > -1) {
+          return true;
+        } else {
+          return false;
+        }
       }
     }
 
     function likeThis(pic) {
-      DataService.like(pic, vm.user).then(function(user) {
-        pic.likers.push(user._id);
+      DataService.like(pic, vm.user).then(function(newPic) {
+        vm.likedThis(newPic);
+      });
+    }
+
+    function unlikeThis(pic) {
+      DataService.unlike(pic, vm.user).then(function(newPic) {
+        vm.likedThis(newPic);
       });
     }
   }

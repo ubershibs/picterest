@@ -47,7 +47,7 @@ body {
   max-height: 100%;
 }
 @media only screen and (max-width: 749px) {
-  .demo-dialog-example {
+  .addPicDialog {
     width: 500px;
   }
 }
@@ -70,13 +70,31 @@ body {
   transform: rotate(0deg);
 }
 
-#addPicImage {
+#preview {
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:center center;
+}
+
+#addPicImage, #preview {
   display: block;
-  max-height: 720px;
-  max-width: 720px;
-  width: auto;
-  height: auto;
-  margin: 5px;
+  position: relative;
+  width: 640px;
+  height: 480px;
+  margin: 15px auto;
+}
+
+#addPicImage {
+  background-color: lightgray;
+}
+
+#addPicImage > span {
+  display: block;
+  position: relative;
+  margin: 30% auto;
+  text-align: center;
+  font-weight: 700;
+  font-size: 48px;
 }
 
 @media only screen and (max-width: 749px) {
@@ -96,4 +114,21 @@ body {
   border-bottom: 1px solid gray;
   max-width: 100%;
   width: 500px;
+}
+
+.site-title {
+  display: inline-block;
+  font-weight: 700;
+  font-size: 36px;
+}
+
+.page-title {
+  display: inline-block;
+  color: white;
+  background-color: rgb(0,188,212);
+  font-size: 36px;
+}
+
+.cyan {
+  color: rgb(0,188,212);
 }

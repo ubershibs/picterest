@@ -6,7 +6,8 @@ var picSchema = new Schema({
   url: String,
   posters: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   title: String,
-  likers: [{ type: Schema.Types.ObjectId, ref: 'User' }]
+  likers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  ratio: Number
 });
 
 mongoose.model('Pic', picSchema);

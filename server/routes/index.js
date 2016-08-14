@@ -18,5 +18,6 @@ router.post('/api/pic/:id/like', UserHandler.isAuthenticated, BoardHandler.likeP
 router.delete('/api/pic/:id/like', UserHandler.isAuthenticated, BoardHandler.unlikePic);
 router.get('/api/pic/:id/like', BoardHandler.getLikes);
 router.get('/api/pics/:username', BoardHandler.getUserPics);
+router.delete('/api/pic/:id', UserHandler.isAuthenticated, BoardHandler.deletePic);
 
 module.exports = router;

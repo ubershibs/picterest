@@ -4,9 +4,9 @@
     .module('picterestApp')
     .controller('NavigationCtrl', NavigationCtrl);
 
-  NavigationCtrl.$inject = ['$auth', '$window', '$rootScope', '$mdPanel'];
+  NavigationCtrl.$inject = ['$auth', '$window', '$rootScope', '$mdPanel', '$location'];
 
-  function NavigationCtrl($auth, $window, $rootScope, $mdPanel) {
+  function NavigationCtrl($auth, $window, $rootScope, $mdPanel, $location) {
     var vm = this;
     vm.authenticate = authenticate;
     vm.user = null;
@@ -15,6 +15,7 @@
     vm.addPicModal = addPicModal;
     vm._mdPanel = $mdPanel;
     vm.disableParentScroll = false;
+    vm.title = title;
 
     (function init() {
       if (vm.isAuthenticated) {
@@ -25,7 +26,6 @@
     function authenticate(provider) {
       $auth.authenticate(provider)
         .then(function(response) {
-          console.log(response);
           $window.localStorage.currentUser = JSON.stringify(response.data.user);
           $rootScope.currentUser = JSON.parse($window.localStorage.currentUser);
           vm.user = $rootScope.currentUser;
@@ -40,6 +40,16 @@
       vm.isAuthenticated = $auth.isAuthenticated();
     }
 
+    function title() {
+      var re = new RegExp('^\/user\/.+$');
+      var path = $location.path();
+      if (path === '/') {
+        return 'All Pics';
+      } else if (re.test(path)) {
+        var array = path.split('/');
+        return array[2  ] + '\'s pics';
+      }
+    }
     function addPicModal() {
       var position = vm._mdPanel.newPanelPosition()
       .absolute()
@@ -63,20 +73,38 @@
     }
   }
 
-  function PanelDialogCtrl(mdPanelRef, DataService) {
+  PanelDialogCtrl.$inject = ['mdPanelRef', 'DataService', '$q'];
+  function PanelDialogCtrl(mdPanelRef, DataService, $q) {
     var vm = this;
+    vm.imgSrc = '';
     vm._mdPanelRef = mdPanelRef;
     vm.closeDialog = closeDialog;
     vm.savePic = savePic;
 
     function savePic(image, title) {
-      DataService.savePic(image, title).then(function(result) {
-        closeDialog();
+      findDimensions(image).then(function(ratio) {
+        DataService.savePic(image, title, ratio);
+        vm.closeDialog();
       });
     }
 
     function closeDialog() {
       vm._mdPanelRef.close();
+    }
+
+    // Private methods
+    function findDimensions(image) {
+      return $q(function(resolve, reject) {
+        var img = new Image();
+        img.src = image;
+
+        img.onload = function() {
+          var height = img.naturalHeight;
+          var width = img.naturalWidth;
+          var ratio = width / height;
+          resolve(ratio);
+        };
+      });
     }
   }
 })();

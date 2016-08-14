@@ -1,25 +1,39 @@
-<md-card md-whiteframe="10" ng-hide="vm.pics.length === 0" layout-padding flex-gt-sm="33" flex-sm="50" flex="100" ng-repeat="pic in vm.pics">
-  <md-card-title-text>
-    <span class="md-headline">{{ pic.title }}</span>
-    <span layout="row" layout-align="start center">
-      <span class="md-subhead">{{ pic.posters[0].username }}</span>
-      <md-button class="md-icon-button" ng-hide="vm.likedThis(pic)" ng-click="vm.like(pic)">
-        <md-icon>favorite</md-icon>
-        <md-tooltip>Like This</md-tooltip>
-      </md-button>
-      <md-button class="md-icon-button" ng-show="vm.likedThis(pic)" ng-click="vm.unlike(pic)  ">
-        <md-icon class="md-accent">favorite</md-icon>
-        <md-tooltip>Like This</md-tooltip>
-      </md-button>
-      <span class="md-subhead">{{ pic.likers.length }}</span>
-      <md-button class="md-icon-button">
-        <md-icon>replay</md-icon>
-        <md-tooltip>Repost</md-tooltip>
-      </md-button>
-      <span class="md-subhead">{{ pic.posters.length - 1 }}</span>
-    </span>
-  </md-card-title-text>
-  <div layout="row" layout-align="center center">
-    <img ng-src="{{ pic.url }}" class="md-card-image" alt="{{ pic.title }}"/>
+<div layout="column" flex="grow" layout-padding>
+  <div ng-hide="vm.pics.length === 0" layout="column" layout-fill>
+    <md-grid-list md-cols-xs="2"  md-cols-sm="6" md-cols-md="8" md-cols-lg="10" md-cols-xl="12" md-gutter="1em" md-row-height="13:16" flex>
+      <md-grid-tile ng-repeat="pic in vm.pics" md-colspan-xs="2" md-colspan="{{ pic.colSpan }}" md-rowspan="{{ pic.rowSpan }}" layout-padding>
+        <md-card md-whiteframe="10" ng-hide="vm.pics.length === 0" layout-padding  class="grid-item">
+          <md-card-title-text>
+            <span class="md-headline">{{ pic.title }}</span>
+            <span layout="row" layout-align="start center">
+              <span class="md-subhead">{{ pic.posters[0].username }}</span>
+              <md-button class="md-icon-button" ng-show="pic.likers.indexOf(vm.user._id) === -1" ng-click="vm.likeThis(pic)">
+                <md-icon>favorite</md-icon>
+                <md-tooltip>Like This</md-tooltip>
+              </md-button>
+              <md-button class="md-icon-button" ng-show="pic.likers.indexOf(vm.user._id) > -1" ng-click="vm.unlikeThis(pic)">
+                <md-icon class="cyan">favorite</md-icon>
+                <md-tooltip>Unlike This</md-tooltip>
+              </md-button>
+              <span class="md-subhead">{{ pic.likers.length }}</span>
+              <md-button class="md-icon-button">
+                <md-icon>replay</md-icon>
+                <md-tooltip>Repost</md-tooltip>
+              </md-button>
+              <span class="md-subhead">{{ pic.posters.length - 1 }}</span>
+              <md-button class="md-icon-button" ng-show="vm.isOwnPage === true" ng-click="vm.deleteThis(pic)">
+                <md-icon>delete_forever</md-icon>
+                <md-tooltip>Delete permanently</md-tooltip>
+              </md-button>
+            </span>
+          </md-card-title-text>
+          <div layout="row" layout-align="center center">
+            <img ng-src="{{ pic.url }}" class="md-card-image" alt="{{ pic.title }}"/>
+          </div>
+        </md-card>
+      </md-grid-tile>
+    </md-grid-list>
   </div>
-</md-card>
+</div>
+<!--
+ -->

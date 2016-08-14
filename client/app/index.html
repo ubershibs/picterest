@@ -25,15 +25,12 @@
     <![endif]-->
 
     <!-- Add your site or application content here -->
-    <div layout="column" layout-fill ng-controller="NavigationCtrl as ctrl">
+    <div layout="column" layout-fill ng-controller="NavigationCtrl as ctrl" ng-cloak>
       <md-toolbar>
         <div class="md-toolbar-tools">
           <h1>
-            <span>Picterest</span>
+            <a href="/"><span class="site-title">Picterest:</span></a><span class="page-title">{{ ctrl.title() }}</span>
           </h1>
-          <md-button href="/">
-            All Pics
-          </md-button>
           <span flex></span>
           <span ng-hide="ctrl.isAuthenticated">
             <span class="menu-text">Sign in using:</span>
@@ -44,12 +41,15 @@
               <md-tooltip>Sign in wih Twitter</md-tooltip>
             </md-button>
           </span>
-          <span ng-show="ctrl.isAuthenticated">
+          <span ng-show="ctrl.isAuthenticated" layout="row" layout-align="end center">
             <md-button class="md-fab md-mini fa fa-plus-circle" id="addpic" aria-label="Add a picture" ng-click="ctrl.addPicModal($event)">
               <md-tooltip>Add a new picture</md-tooltip>
             </md-button>
             <md-button class="md-accent md-raised" id="mypics" aria-label="My Pics" ng-href="/user/{{ ctrl.user.username }}">
               My Pics
+            </md-button>
+            <md-button id="allpics" aria-label="All Pics" href="/">
+              All Pics
             </md-button>
             <md-button id="signout" aria-label="Sign Out" ng-click="ctrl.logout()">
               Sign Out
@@ -58,7 +58,6 @@
         </div>
       </md-toolbar>
       <md-content layout-gt-xs="row" layout="col" class="main">
-        <flash-message></flash-message>
         <div ng-view layout="row" flex layout-align="start start">
 
         </div>

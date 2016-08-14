@@ -6,20 +6,23 @@
   </md-toolbar>
   <div class="add-dialog-content">
     <div layout="row" >
-      <img ng-show="imgSrc" id="addPicImage" flex alt="Your Picture" ng-src="{{ imgSrc }}">
+      <div ng-show="ctrl.imgSrc" ng-style="{'background-image': 'url(' + ctrl.imgSrc +')'}" id="preview"></div>
+      <div ng-hide="ctrl.imgSrc" id="addPicImage" flex>
+        <span>Image Preview</span>
+      </div>
     </div>
   </div>
   <div layout="column" class="add-dialog-content">
     <div layout="row" class="container">
       <label for="imgSrc">Image URL</label>
-      <input id="imgSrc" ng-model="imgSrc">
+      <input id="imgSrc" ng-model="ctrl.imgSrc">
     </div>
     <div layout="row" class="container">
       <label for="imgTitle">Title</label>
       <input id="imgTitle" ng-model="imgTitle">
     </div>
     <div layout="row">
-      <md-button flex class="md-accent add-dialog-button" ng-click="ctrl.savePic(imgSrc, imgTitle)">
+      <md-button flex class="md-accent add-dialog-button" ng-click="ctrl.savePic(ctrl.imgSrc, imgTitle)">
         Save
       </md-button>
       <md-button class="md-warn" flex="25" ng-click="ctrl.closeDialog()">
