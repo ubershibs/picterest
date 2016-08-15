@@ -4,31 +4,35 @@
       <md-grid-tile ng-repeat="pic in vm.pics" md-colspan-xs="2" md-colspan="{{ pic.colSpan }}" md-rowspan="{{ pic.rowSpan }}" layout-padding>
         <md-card md-whiteframe="10" ng-hide="vm.pics.length === 0" layout-padding  class="grid-item">
           <md-card-title-text>
-            <span class="md-headline">{{ pic.title }}</span>
-            <span layout="row" layout-align="start center">
-              <span class="md-subhead">{{ pic.posters[0].username }}</span>
-              <md-button class="md-icon-button" ng-show="pic.likers.indexOf(vm.user._id) === -1" ng-click="vm.likeThis(pic)">
+            <div class="md-headline">{{ pic.title }}</div>
+            <div layout="row" layout-align="start center">
+              <span class="md-subhead"><a ng-href="/user/{{ pic.posters[0].username }}">{{ pic.posters[0].username }}</a></span>
+              <md-button class="md-icon-button" ng-show="pic.liked === false" ng-click="vm.likeThis(pic, $event)">
                 <md-icon>favorite</md-icon>
                 <md-tooltip>Like This</md-tooltip>
               </md-button>
-              <md-button class="md-icon-button" ng-show="pic.likers.indexOf(vm.user._id) > -1" ng-click="vm.unlikeThis(pic)">
+              <md-button class="md-icon-button" ng-show="pic.liked === true" ng-click="vm.unlikeThis(pic, $event)">
                 <md-icon class="cyan">favorite</md-icon>
                 <md-tooltip>Unlike This</md-tooltip>
               </md-button>
               <span class="md-subhead">{{ pic.likers.length }}</span>
-              <md-button class="md-icon-button">
+              <md-button class="md-icon-button" ng-show="pic.reposter === false" ng-click="vm.repostThis(pic, $event)">
                 <md-icon>replay</md-icon>
                 <md-tooltip>Repost</md-tooltip>
+              </md-button>
+              <md-button class="md-icon-button" ng-show="pic.reposter === true">
+                <md-icon class="cyan">replay</md-icon>
+                <md-tooltip>Reposted!</md-tooltip>
               </md-button>
               <span class="md-subhead">{{ pic.posters.length - 1 }}</span>
               <md-button class="md-icon-button" ng-show="vm.isOwnPage === true" ng-click="vm.deleteThis(pic)">
                 <md-icon>delete_forever</md-icon>
                 <md-tooltip>Delete permanently</md-tooltip>
               </md-button>
-            </span>
+            </div>
           </md-card-title-text>
           <div layout="row" layout-align="center center">
-            <img ng-src="{{ pic.url }}" class="md-card-image" alt="{{ pic.title }}"/>
+            <img ng-src="{{ pic.url }}" err-src="images/image.png" class="md-card-image" alt="{{ pic.title }}"/>
           </div>
         </md-card>
       </md-grid-tile>

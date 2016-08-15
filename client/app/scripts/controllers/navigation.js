@@ -44,10 +44,10 @@
       var re = new RegExp('^\/user\/.+$');
       var path = $location.path();
       if (path === '/') {
-        return 'All Pics';
+        return 'Everyone';
       } else if (re.test(path)) {
         var array = path.split('/');
-        return array[2  ] + '\'s pics';
+        return array[2];
       }
     }
     function addPicModal() {

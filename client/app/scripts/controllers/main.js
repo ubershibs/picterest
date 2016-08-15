@@ -11,19 +11,18 @@
   angular.module('picterestApp')
     .controller('MainCtrl', MainCtrl);
 
-  MainCtrl.$inject = ['DataService', '$mdToast', '$auth', '$window', '$scope'];
-  function MainCtrl(DataService, $mdToast, $auth, $window, $scope) {
+  MainCtrl.$inject = ['DataService', '$mdToast', '$auth', '$window', '$scope', '$mdDialog'];
+  function MainCtrl(DataService, $mdToast, $auth, $window, $scope, $mdDialog) {
     var vm = this;
     vm.pics = [];
-    vm.user = null;
-    vm.title = 'All Users\' Pics';
+    vm.user = '';
     vm.getAllThePics = getAllThePics;
-    vm.likedThis = likedThis;
     vm.likeThis = likeThis;
-    vm.isAuthenicated = isAuthenticated;
+    vm.isAuthenticated = isAuthenticated;
     vm.showToast = showToast;
     vm.isOwnPage = false;
     vm.unlikeThis = unlikeThis;
+    vm.repostThis = repostThis;
 
     (function init() {
       vm.pics = [];
@@ -63,29 +62,54 @@
         .then(function(result) {
           vm.pics = result;
         }, function(error) {
+          console.log(error);
         } );
     }
 
-    function likedThis(pic) {
-      if (vm.user) {
-        if (pic.likers && pic.likers.indexOf(vm.user._id) > -1) {
-          return true;
-        } else {
-          return false;
-        }
+    function likeThis(pic, event) {
+      if (vm.isAuthenticated() === true) {
+        DataService.like(pic, vm.user).then(function(newPic) {
+          return newPic;
+        });
+      } else {
+        showSignInAlert(event, 'like');
       }
     }
 
-    function likeThis(pic) {
-      DataService.like(pic, vm.user).then(function(newPic) {
-        vm.likedThis(newPic);
-      });
+    function unlikeThis(pic, event) {
+      if (vm.isAuthenticated() === true) {
+        DataService.unlike(pic, vm.user).then(function(newPic) {
+          return newPic;
+        });
+      } else {
+        showSignInAlert(event, 'unlike');
+      }
     }
 
-    function unlikeThis(pic) {
-      DataService.unlike(pic, vm.user).then(function(newPic) {
-        vm.likedThis(newPic);
-      });
+    function repostThis(pic, event) {
+      if (vm.isAuthenticated() === true) {
+        DataService.repostPic(pic, vm.user).then(function(newPic) {
+          return newPic;
+        });
+      } else {
+        showSignInAlert(event, 'repost pics');
+      }
+    }
+
+    // Private methods
+    function showSignInAlert(event, ev) {
+      var text = 'Only signed-in users can ' +  ev + '.';
+      text += 'Use the buttons at the top right of the screen to sign in.';
+      $mdDialog.show(
+        $mdDialog.alert(event, text)
+          .parent(angular.element(document.querySelector('md-content')))
+          .clickOutsideToClose(true)
+          .title('Please Sign In to Continue')
+          .textContent(text)
+          .ariaLabel('Sign In Dialog')
+          .ok('Got it!')
+          .targetEvent(event)
+        );
     }
   }
 

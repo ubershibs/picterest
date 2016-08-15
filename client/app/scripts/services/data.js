@@ -22,6 +22,7 @@
       getAllThePics: getAllThePics,
       getUserPics: getUserPics,
       savePic: savePic,
+      repostPic: repostPic,
       getCurrentPics: getCurrentPics,
       getStatusMessage: getStatusMessage,
       clearStatusMessage: clearStatusMessage,
@@ -35,7 +36,9 @@
     function getAllThePics() {
       return $q(function(resolve, reject) {
         $http.get('http://localhost:3000/api/pics').then(function(result) {
-          pics = setTileSpan(result.data);
+          var picArray = setTileSpan(result.data);
+          picArray = isLiked(picArray);
+          pics = isReposter(picArray);
           resolve(pics);
         }, function(error) {
           reject(error);
@@ -46,7 +49,9 @@
     function getUserPics(username) {
       return $q(function(resolve, reject) {
         $http.get('http://localhost:3000/api/pics/' + username).then(function(result) {
-          pics = setTileSpan(result.data);
+          var picArray = setTileSpan(result.data);
+          picArray = isLiked(picArray);
+          pics = isReposter(picArray);
           resolve(pics);
         }, function(error) {
           reject(error);
@@ -73,6 +78,26 @@
           statusMessage = response.data.message;
           newPic = ratioMath(response.data.pic);
           pics.push(newPic);
+        }
+      });
+    }
+
+    function repostPic(pic, user) {
+      return $http.post('http://localhost:3000/api/pic/' + pic._id).then(function(response) {
+        var newPic = '';
+        if (response.data.type === 'dupe') {
+          statusMessage = response.data.message;
+        } else if (response.data.type === 'repost') {
+          statusMessage = response.data.message;
+          newPic = ratioMath(response.data.pic);
+          var index = findIndex(pics, newPic._id);
+          newPic.reposter = true;
+          if (newPic.likers.indexOf(user) > -1) {
+            newPic.liked = true;
+          } else {
+            newPic.liked = false;
+          }
+          pics[index] = newPic;
         }
       });
     }
@@ -107,6 +132,13 @@
           .then(function(response) {
             statusMessage = response.data.message;
             newPic = ratioMath(response.data.pic);
+            newPic.liked = true;
+            if ($auth.isAuthenticated() === true) {
+              var user = JSON.parse($window.localStorage.currentUser);
+              newPic = isReposterLogic(newPic, user);
+            } else {
+              newPic.reposter = false;
+            }
             var index = findIndex(pics, newPic._id);
             pics[index] = newPic;
             resolve(newPic);
@@ -127,6 +159,14 @@
           .then(function(response) {
             statusMessage = response.data.message;
             newPic = ratioMath(response.data.pic);
+            newPic.liked = false;
+            if ($auth.isAuthenticated() === true) {
+              var user = JSON.parse($window.localStorage.currentUser);
+              newPic = isReposterLogic(newPic, user);
+            } else {
+              newPic.reposter = false;
+            }
+            console.log(newPic);
             var index = findIndex(pics, newPic._id);
             pics[index] = newPic;
             resolve(newPic);
@@ -143,7 +183,7 @@
           return i;
         }
       }
-      throw 'Couldn\'t find object with id: ' + id;
+      throw 'Could not find object with id: ' + id;
     }
 
     function setTileSpan(array) {
@@ -166,6 +206,57 @@
       } else {
         pic.rowSpan = min;
         pic.colSpan = min;
+      }
+      return pic;
+    }
+
+    function isLiked(pics) {
+      var newArray = [];
+      if ($auth.isAuthenticated() === true) {
+        var user = JSON.parse($window.localStorage.currentUser);
+        pics.forEach(function(pic) {
+          if (pic.likers.indexOf(user._id) > -1) {
+            pic.liked = true;
+          } else {
+            pic.liked = false;
+          }
+          newArray.push(pic);
+        });
+      } else {
+        pics.forEach(function(pic) {
+          pic.liked = false;
+          newArray.push(pic);
+        });
+      }
+      return newArray;
+    }
+
+    function isReposter(pics) {
+      var newArray = [];
+      if ($auth.isAuthenticated() === true) {
+        var user = JSON.parse($window.localStorage.currentUser);
+        pics.forEach(function(pic) {
+          pic = isReposterLogic(pic, user);
+          newArray.push(pic);
+        });
+      } else {
+        pics.forEach(function(pic) {
+          pic.reposter = false;
+          newArray.push(pic);
+        });
+      }
+      return newArray;
+    }
+
+    function isReposterLogic(pic, user) {
+      var idArray = [];
+      pic.posters.forEach(function(poster) {
+        idArray.push(poster._id);
+      });
+      if (idArray.indexOf(user._id) > 0) {
+        pic.reposter = true;
+      } else {
+        pic.reposter = false;
       }
       return pic;
     }

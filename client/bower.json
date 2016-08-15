@@ -8,7 +8,8 @@
     "angular-route": "^1.4.0",
     "angular-sanitize": "^1.4.0",
     "angular-material": "^1.0.9",
-    "satellizer": "^0.15.4"
+    "satellizer": "^0.15.4",
+    "jquery": "^3.1.0"
   },
   "devDependencies": {
     "angular-mocks": "^1.4.0"
