@@ -17,7 +17,6 @@ I flip-flopped on this on a bit - was originally intending to avoid Angular, but
 - Node.js
 - Express (and Express-session, Morgan, BodyParser, CookieParser)
 - MongoDB/Mongoose
-- Passport (with Twitter strategy)
 - Angular
 - Angular Material
-- Satellizer, for authentication on the Angular side
+- Satellizer, for authentication

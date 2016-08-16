@@ -6,29 +6,50 @@
   </md-toolbar>
   <div class="add-dialog-content">
     <div layout="row" >
-      <div ng-show="ctrl.imgSrc" ng-style="{'background-image': 'url(' + ctrl.imgSrc +')'}" id="preview"></div>
+      <div ng-show="ctrl.imgSrc" class="preview"><img ng-src="{{ ctrl.imgSrc }}" class="preview" err-src="images/images.png" /></div>
       <div ng-hide="ctrl.imgSrc" id="addPicImage" flex>
         <span>Image Preview</span>
       </div>
     </div>
   </div>
   <div layout="column" class="add-dialog-content">
-    <div layout="row" class="container">
-      <label for="imgSrc">Image URL</label>
-      <input id="imgSrc" ng-model="ctrl.imgSrc">
-    </div>
-    <div layout="row" class="container">
-      <label for="imgTitle">Title</label>
-      <input id="imgTitle" ng-model="imgTitle">
-    </div>
-    <div layout="row">
-      <md-button flex class="md-accent add-dialog-button" ng-click="ctrl.savePic(ctrl.imgSrc, imgTitle)">
-        Save
-      </md-button>
-      <md-button class="md-warn" flex="25" ng-click="ctrl.closeDialog()">
-        Cancel
-      </md-button>
-    </div>
-
+    <form name="addPic">
+      <md-input-container class="md-block">
+        <label for="imgSrc">Image URL</label>
+        <input id="imgSrc" ng-model="ctrl.imgSrc" name="imgSrc" required>
+        <div ng-messages="addPic.imgSrc.$error">
+          <div ng-message="required">A title is required.</div>
+       </div>
+      </md-input-container>
+      <md-input-container class="md-block">
+        <label for="imgTitle">Title</label>
+        <input id="imgTitle" ng-model="imgTitle" name="imgTitle" required>
+        <div ng-messages="addPic.imgTitle.$error">
+          <div ng-message="required">A title is required.</div>
+       </div>
+      </md-input-container>
+      <div layout="row">
+        <md-button flex class="md-accent add-dialog-button" ng-click="ctrl.savePic(ctrl.imgSrc, imgTitle)">
+          Save
+        </md-button>
+        <md-button class="md-warn" flex="25" ng-click="ctrl.closeDialog()">
+          Cancel
+        </md-button>
+      </div>
+    </form>
   </div>
 </div>
+<script>
+    $('img').each(function() {
+      if (this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0) {
+            var src = $(this).attr("src");
+            var suffix = src.substring(src.length - 6, src.length).split('.')[0];
+            suffix = suffix.charAt(suffix.length - 1);
+            $(this).attr("src", "images/image.png");
+        }
+    });
+});
+
+    })
+  })
+</script>

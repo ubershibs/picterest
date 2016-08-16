@@ -6,7 +6,8 @@ var UserHandler = require('../handlers/UserHandler');
 
 // Auth routes
 router.post('/auth/github', UserHandler.githubSignin);
-router.post('/auth/twiter', UserHandler.twitterSignin);
+router.post('/auth/twitter', passport.authenticate('twitter');
+router
 
 // User routes
 router.get('/api/user/:id', UserHandler.userInfo);

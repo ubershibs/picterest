@@ -54,12 +54,14 @@
     $authProvider.twitter({
       url: 'http://localhost:3000/auth/twitter',
       clientId: 'RnYWR4G2LtQd5frxR9iymU4CR',
-      redirectUri: 'http://localhost:9000/',
-      responseType: 'token'
+      authorizationEndpoint: 'https://api.twitter.com/oauth/authenticate',
+      redirectUri: window.location.origin,
+      oauthType: '1.0',
+      popupOptions: { width: 495, height: 645 }
     });
 
     $authProvider.httpInterceptor = true;
-
+    $authProvider.withCredentials = true;
   }
 
   runFn.$inject = ['$rootScope', '$window', '$auth'];

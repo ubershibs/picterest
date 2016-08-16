@@ -1,9 +1,13 @@
+'use strict';
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
 var moment = require('moment');
 var jwt = require('jwt-simple');
 var config = require('../config');
 var request = require('request');
+var passport = require('passport');
+var TwitterStrategy = require('passport-twitter').Strategy;
+var BearerStrategy = require('passport-http-bearer').Strategy;
 
 var service = {
   isAuthenticated: isAuthenticated,
@@ -66,7 +70,6 @@ function githubSignin(req, res, next) {
     grant_type: 'authorization_code'
   };
 
-  // Step 1. Exchange authorization code for access token.
   request.post({ url: accessTokenUrl, form: params, json: true }, function(error, response, body) {
     var access_token = body.access_token;
     request.get({ url: userProfileUrl + '?access_token=' + access_token, headers: { 'User-Agent': 'ubershibs picterest' }}, function(error, response, getBody) {
@@ -84,6 +87,7 @@ function githubSignin(req, res, next) {
       var options = { upsert: true, new: true };
 
       User.findOneAndUpdate(query, user, options).exec(function(err, result) {
+        if (err) { return next(err); }
         var token = createToken(result);
         res.send({ token: token, user: result });
       });
@@ -91,47 +95,75 @@ function githubSignin(req, res, next) {
   });
 };
 
-function twitterSignin(req, res, next) {
-  var accessTokenUrl = 'https://api.twitter.com/oauth/access_token';
+passport.user(new TwitterStrategy({
+    consumerKey: req.body.clientId,
+    consumerSecret: config.twitterClientSecret,
+    callbackURL: config.twitterCallbackUrl
+  },
+  function(token, tokenSecret, profile, done) {
+    process.nextTick(function() {
+      User.findOne({ twitterId: profile.id }).exec(function(err, result) {
+        if (err) { return cb(err) }
+      })
+      return done(null, profile);
+    });
+  }
+});
 
-  var params = {
-    client_id: req.body.clientId,
-    redirect_uri: req.body.redirectUri,
-    client_secret: config.twitterClientSecret,
-    code: req.body.code,
-    grant_type: 'authorization_code'
-  };
+  var requestTokenUrl = 'https://api.twitter.com/oauth/request_token';
+  var accessTokenUrl = 'https://github.com/login/oauth/access_token';
+  var authenticateUrl = 'https://api.twitter.com/oauth/authenticate';
 
-  // Step 1. Exchange authorization code for access token.
-  request.post({ url: accessTokenUrl, form: params, json: true }, function(error, response, body) {
-    console.log(JSON.stringify(body));
-    var access_token = body.access_token;
 
-    request.get({ url: userProfileUrl + '?access_token=' + access_token, headers: { 'User-Agent': 'ubershibs picterest' }}, function(error, response, body) {
+  console.log("Began Twitter back-end function");
+  if (!req.query.oauth_token || !req.query.oauth_verifier) {
+    var requestTokenOauth = {
+      callback: twitter_callback,
+      consumer_key: twitter_key,
+      consumer_secret: twitter_secret,
+    };
+    console.log('No oauth token fund. Preparing request token; ' + JSON.stringify(requestTokenOauth));
 
-      // Step 2b. Create a new user account or return an existing one.
-      User.findOne({ twitterId: body.id }, function(err, existingUser) {
-        if (existingUser) {
+    // Step 1. Obtain request token for the authorization popup.
+    request.post({url: requestTokenUrl, oauth: requestTokenOauth}, function(err, response, body) {
+      var oauthToken = body;
+      console.log(oauthToken);
 
-          var token = createToken(existingUser);
-          res.send({ token: token, user: existingUser });
+      // Step 2. Redirect to the authorization screen.
+      res.redirect(authenticateUrl + '?oauth_token=' + oauthToken.oauth_token);
+    });
+  } else {
+    var accessTokenOauth = {
+      consumer_key: twitter_key,
+      consumer_secret: twitter_secret,
+      token: req.query.oauth_token,
+      verifier: req.query.oauth_verifier
+    };
 
-        } else {
+    // Step 3. Exchange oauth token and oauth verifier for access token.
+    request.post({url: accessTokenUrl, oauth: accessTokenOauth}, function(err, response, profile) {
 
-          var user = new User({
-            githubId: body.id,
-            username: body.login,
-            accessToken: access_token
-          });
+      var profile = JSON.parse(profile);
+      console.log(profile);
 
-          user.save(function() {
-            var token = createToken(user);
-            res.send({ token: token, user: user });
-          });
-        }
+      var user = {
+        twitterId: profile.id,
+        username: profile.screen_name,
+        email: profile.email,
+        accessToken: access_token
+      };
+
+      var query =  { twitterId: user.githubId };
+
+      var options = { upsert: true, new: true };
+
+      // Step 4. Create or update a user account
+      User.findOneAndUpdate(query, user, options).exec(function(err, result) {
+        var token = createToken(result);
+        res.send({ token: token, user: result });
       });
     });
-  });
+  };
 };
 
 function userInfo(req, res, next) {

@@ -17,7 +17,11 @@
     "moment": "^2.14.1",
     "mongoose": "^4.5.8",
     "morgan": "^1.7.0",
+    "passport": "^0.3.2",
+    "passport-http-bearer": "^1.0.1",
+    "passport-twitter": "^1.0.4",
     "path": "^0.12.7",
+    "qs": "^6.2.1",
     "request": "^2.74.0"
   }
 }

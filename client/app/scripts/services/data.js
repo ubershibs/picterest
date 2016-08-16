@@ -67,6 +67,7 @@
         ratio: ratio
       };
       $http.post('http://localhost:3000/api/pics', body).then(function(response) {
+        console.log(response);
         if (response.data.type === 'dupe') {
           statusMessage = response.data.message;
         } else if (response.data.type === 'repost') {
