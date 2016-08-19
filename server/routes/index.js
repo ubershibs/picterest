@@ -3,15 +3,10 @@ var router = express.Router();
 
 var BoardHandler = require('../handlers/BoardHandler');
 var UserHandler = require('../handlers/UserHandler');
-// var passportTwitter = require('../handlers/passport.twitter.js');
 
 // Auth routes
 router.post('/auth/github', UserHandler.githubSignin);
-router.post('/auth/twitter', function(req, res, next) {
-  console.log('req: ' + JSON.stringify(req.body));
-  UserHandler.twitterSignin(req, res, next);
-});
-// router.get('/auth/twitter', UserHandler.twitterSignin);
+router.post('/auth/twitter', UserHandler.twitterSignin);
 
 // Board routes
 router.get('/api/pics', BoardHandler.allPics);

@@ -12,7 +12,6 @@
   angular
     .module('picterestApp', [
       'ngAnimate',
-      'ngResource',
       'ngRoute',
       'ngSanitize',
       'ngMaterial',
@@ -47,13 +46,13 @@
     $locationProvider.html5Mode(true);
     $authProvider.github({
       clientId: '8eeaab0ee8e8495d69f6',
-      redirectUri: 'http://127.0.0.1:9000/',
-      url: 'http://127.0.0.1:3000/auth/github'
+      redirectUri: 'http://ubershibs-picterest.herokuapp.com',
+      url: 'http://picterest-backend.herokupapp.com/auth/github'
     });
 
     $authProvider.twitter({
-      url: 'http://127.0.0.1:3000/auth/twitter',
-      redirectUri: 'http://127.0.0.1:9000'
+      url: 'http://picterest-backend.herokupapp.com/auth/twitter',
+      redirectUri: 'http://ubershibs-picterest.herokuapp.com'
     });
 
   }

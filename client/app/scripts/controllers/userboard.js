@@ -75,7 +75,7 @@
     function likeThis(pic, event) {
       if (vm.isAuthenticated() === true) {
         DataService.like(pic, vm.user).then(function(newPic) {
-          return newPic();
+          return newPic;
         });
       } else {
         showSignInAlert(event, 'like');

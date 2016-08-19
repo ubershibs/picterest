@@ -70,16 +70,6 @@ a:hover {
 .add-dialog-button {
   width: 100%;
 }
-.demo-dialog-custom-animation-open {
-  opacity: 1;
-  transition: all 1s linear, opacity 1ms;
-  transform: rotate(390deg);
-}
-.demo-dialog-custom-animation-close {
-  opacity: 0;
-  transition: all 1s linear, opacity 1ms;
-  transform: rotate(0deg);
-}
 
 .preview {
   width: auto;

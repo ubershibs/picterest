@@ -4,15 +4,11 @@
   "dependencies": {
     "angular": "^1.4.0",
     "angular-animate": "^1.4.0",
-    "angular-resource": "^1.4.0",
     "angular-route": "^1.4.0",
     "angular-sanitize": "^1.4.0",
     "angular-material": "^1.0.9",
     "satellizer": "^0.15.4",
-    "jquery": "^3.1.0",
-    "auth0-lock": "^10.1.0",
-    "angular-lock": "^1.0.1",
-    "angular-jwt": "^0.1.1"
+    "jquery": "^3.1.0"
   },
   "devDependencies": {
     "angular-mocks": "^1.4.0"

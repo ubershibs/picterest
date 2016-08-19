@@ -39,17 +39,3 @@
     </form>
   </div>
 </div>
-<script>
-    $('img').each(function() {
-      if (this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0) {
-            var src = $(this).attr("src");
-            var suffix = src.substring(src.length - 6, src.length).split('.')[0];
-            suffix = suffix.charAt(suffix.length - 1);
-            $(this).attr("src", "images/image.png");
-        }
-    });
-});
-
-    })
-  })
-</script>

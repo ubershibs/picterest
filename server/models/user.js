@@ -1,7 +1,5 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var jwt = require('jsonwebtoken');
-var moment = require('moment');
 
 //user Schema
 var userSchema = new Schema({

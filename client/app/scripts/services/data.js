@@ -35,7 +35,7 @@
 
     function getAllThePics() {
       return $q(function(resolve, reject) {
-        $http.get('http://localhost:3000/api/pics').then(function(result) {
+        $http.get('http://picterest-backend.herokupapp.com/api/pics').then(function(result) {
           var picArray = setTileSpan(result.data);
           picArray = isLiked(picArray);
           pics = isReposter(picArray);
@@ -48,7 +48,7 @@
 
     function getUserPics(username) {
       return $q(function(resolve, reject) {
-        $http.get('http://localhost:3000/api/pics/' + username).then(function(result) {
+        $http.get('http://picterest-backend.herokupapp.com/api/pics/' + username).then(function(result) {
           var picArray = setTileSpan(result.data);
           picArray = isLiked(picArray);
           pics = isReposter(picArray);
@@ -66,8 +66,7 @@
         title: title,
         ratio: ratio
       };
-      $http.post('http://localhost:3000/api/pics', body).then(function(response) {
-        console.log(response);
+      $http.post('http://picterest-backend.herokupapp.com/api/pics', body).then(function(response) {
         if (response.data.type === 'dupe') {
           statusMessage = response.data.message;
         } else if (response.data.type === 'repost') {
@@ -84,7 +83,7 @@
     }
 
     function repostPic(pic, user) {
-      return $http.post('http://localhost:3000/api/pic/' + pic._id).then(function(response) {
+      return $http.post('http://picterest-backend.herokupapp.com/api/pic/' + pic._id).then(function(response) {
         var newPic = '';
         if (response.data.type === 'dupe') {
           statusMessage = response.data.message;
@@ -116,7 +115,7 @@
     }
 
     function deleteThis(pic, user) {
-      $http.delete('http://localhost:3000/api/pic/' + pic._id).then(function(response) {
+      $http.delete('http://picterest-backend.herokupapp.com/api/pic/' + pic._id).then(function(response) {
         statusMessage = response.data.message;
         var index = findIndex(pics, pic._id);
         pics.splice(index, 1);
@@ -129,7 +128,7 @@
           pic: pic,
           user: user
         };
-        $http.post('http://localhost:3000/api/pic/' + pic._id + '/like', body)
+        $http.post('http://picterest-backend.herokupapp.com/api/pic/' + pic._id + '/like', body)
           .then(function(response) {
             statusMessage = response.data.message;
             newPic = ratioMath(response.data.pic);
@@ -156,7 +155,7 @@
           pic: pic,
           user: user
         };
-        $http.delete('http://localhost:3000/api/pic/' + pic._id + '/like')
+        $http.delete('http://picterest-backend.herokupapp.com/api/pic/' + pic._id + '/like')
           .then(function(response) {
             statusMessage = response.data.message;
             newPic = ratioMath(response.data.pic);
