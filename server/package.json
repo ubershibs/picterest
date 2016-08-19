@@ -11,9 +11,13 @@
   "dependencies": {
     "body-parser": "^1.15.2",
     "compression": "^1.6.2",
+    "cookie-parser": "^1.4.3",
     "cors": "^2.7.1",
     "express": "^4.14.0",
+    "express-session": "^1.14.0",
     "jsonwebtoken": "^7.1.7",
+    "jwt-simple": "^0.5.0",
+    "method-override": "^2.3.6",
     "moment": "^2.14.1",
     "mongoose": "^4.5.8",
     "morgan": "^1.7.0",
@@ -22,6 +26,9 @@
     "passport-twitter": "^1.0.4",
     "path": "^0.12.7",
     "qs": "^6.2.1",
-    "request": "^2.74.0"
+    "querystring": "^0.2.0",
+    "request": "^2.74.0",
+    "request-debug": "^0.2.0",
+    "serve-static": "^1.11.1"
   }
 }

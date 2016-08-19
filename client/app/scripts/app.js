@@ -52,16 +52,10 @@
     });
 
     $authProvider.twitter({
-      url: 'http://localhost:3000/auth/twitter',
-      clientId: 'RnYWR4G2LtQd5frxR9iymU4CR',
-      authorizationEndpoint: 'https://api.twitter.com/oauth/authenticate',
-      redirectUri: window.location.origin,
-      oauthType: '1.0',
-      popupOptions: { width: 495, height: 645 }
+      url: 'http://localhost:3000/auth/twitter'
     });
 
-    $authProvider.httpInterceptor = true;
-    $authProvider.withCredentials = true;
+    $authProvider.httpInterceptor = function() { return true; };
   }
 
   runFn.$inject = ['$rootScope', '$window', '$auth'];

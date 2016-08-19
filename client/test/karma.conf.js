@@ -30,6 +30,9 @@ module.exports = function(config) {
       'bower_components/angular-messages/angular-messages.js',
       'bower_components/angular-material/angular-material.js',
       'bower_components/satellizer/dist/satellizer.js',
+      'bower_components/auth0-lock/build/lock.js',
+      'bower_components/angular-lock/angular-lock.js',
+      'bower_components/angular-jwt/dist/angular-jwt.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       'app/scripts/**/*.js',
