@@ -6,7 +6,7 @@
     <title>Picterest by Luke Walker</title>
     <meta name="description" content="Picterest, a Pinterest Clone by Luke Walker">
     <meta name="author" content="Luke Walker">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css(.) styles/vendor.css -->
     <!-- bower:css -->
@@ -42,7 +42,7 @@
               <md-button class="md-fab md-mini fa fa-github" id="github" aria-label="Sign in with Github" ng-click="ctrl.authenticate('github')">
                 <md-tooltip>Sign in with Github</md-tooltip>
               </md-button>
-              <md-button class="md-fab md-mini fa fa-twitter" id="twitter" aria-label="Sign in with Twitter" ng-click="authService.login()">
+              <md-button class="md-fab md-mini fa fa-twitter" id="twitter" aria-label="Sign in with Twitter" ng-click="ctrl.authenticate('twitter')">
                 <md-tooltip>Sign in wih Twitter</md-tooltip>
               </md-button>
             </span>

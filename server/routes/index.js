@@ -7,8 +7,11 @@ var UserHandler = require('../handlers/UserHandler');
 
 // Auth routes
 router.post('/auth/github', UserHandler.githubSignin);
-router.post('/auth/twitter', UserHandler.twitterSignin);
-router.get('/auth/twitter', UserHandler.twitterSignin);
+router.post('/auth/twitter', function(req, res, next) {
+  console.log('req: ' + JSON.stringify(req.body));
+  UserHandler.twitterSignin(req, res, next);
+});
+// router.get('/auth/twitter', UserHandler.twitterSignin);
 
 // Board routes
 router.get('/api/pics', BoardHandler.allPics);

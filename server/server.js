@@ -19,7 +19,7 @@ var app = express();
 
 app.use(logger('dev'));
 app.use(function(req, res, next) {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:9000");
+  res.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:9000");
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,accept,authorization');
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -37,7 +37,7 @@ app.use(express.static(path.join(__dirname, 'client'), { maxAge: 2628000000 }));
 app.use('/', routes);
 
 // error handlers
-
+  
 // Catch unauthorised errors
 app.use(function (err, req, res, next) {
   if (err.name === 'UnauthorizedError') {

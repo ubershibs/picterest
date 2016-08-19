@@ -9,6 +9,7 @@ var passport = require('./passport.twitter.js');
 var qs = require('querystring');
 //var BearerStrategy = require('passport-http-bearer').Strategy;
 require('request-debug')(request);
+var OAuth = require('oauth-1.0a');
 
 var serveStatic = require('serve-static');
 
@@ -62,13 +63,69 @@ function createToken(user) {
 // Signs a user in via Github and creates or returns an account
 function githubSignin(req, res, next) {
   var accessTokenUrl = 'https://github.com/login/oauth/access_token';
+  var userApiUrl = 'https://api.github.com/user';
+  var params = {
+    code: req.body.code,
+    client_id: req.body.clientId,
+    client_secret: config.githubClientSecret,
+    redirect_uri: req.body.redirectUri
+  };
+
+  // Step 1. Exchange authorization code for access token.
+  request.get({ url: accessTokenUrl, qs: params }, function(err, response, accessToken) {
+    accessToken = qs.parse(accessToken);
+    var headers = { 'User-Agent': 'Ubershibs Picterest' };
+
+    // Step 2. Retrieve profile information about the current user.
+    request.get({ url: userApiUrl, qs: accessToken, headers: headers, json: true }, function(err, response, profile) {
+
+      // Step 3a. Link user accounts.
+      if (req.header('Authorization')) {
+        User.findOne({ githubId: profile.id }, function(err, existingUser) {
+          if (existingUser) {
+            return res.status(409).send({ message: 'There is already a GitHub account that belongs to you' });
+          }
+          var token = req.header('Authorization').split(' ')[1];
+          var payload = jwt.decode(token, config.tokenSecret);
+          User.findById(payload.sub, function(err, user) {
+            if (!user) {
+              return res.status(400).send({ message: 'User not found' });
+            }
+            user.githubId = profile.id;
+            user.username = profile.login;
+            user.save(function() {
+              var token = createToken(user);
+              res.send({ token: token, user: user });
+            });
+          });
+        });
+      } else {
+        // Step 3b. Create a new user account or return an existing one.
+        User.findOne({ github: profile.id }, function(err, existingUser) {
+          if (existingUser) {
+            var token = createToken(existingUser);
+            return res.send({ token: token, user: existingUser });
+          }
+          var user = new User();
+          user.githubId = profile.id;
+          user.username = profile.login;
+          user.save(function() {
+            var token = createToken(user);
+            res.send({ token: token, user: user });
+          });
+        });
+      }
+    });
+  });
+  /*
+  var accessTokenUrl = 'https://github.com/login/oauth/access_token';
   var userProfileUrl = 'https://api.github.com/user';
 
   var params = {
     client_id: req.body.clientId,
     redirect_uri: req.body.redirectUri,
     client_secret: config.githubClientSecret,
-    code: req.body.code,
+    // code: req.body.code,
     grant_type: 'authorization_code'
   };
 
@@ -79,7 +136,7 @@ function githubSignin(req, res, next) {
 
       var user = {
         githubId: parsedBody.id,
-        username: parsedBody.login,
+        username: 'github-' + parsedBody.login,
         email: parsedBody.email,
         accessToken: access_token
       };
@@ -95,23 +152,23 @@ function githubSignin(req, res, next) {
       });
     });
   });
+  */
 };
 
 function twitterSignin(req, res, next) {
 
   var requestTokenUrl = 'https://api.twitter.com/oauth/request_token';
-  var authenticateUrl = 'https://api.twitter.com/oauth/authenticate';
-  var accessTokenUrl = 'https://github.com/login/oauth/access_token';
+  var accessTokenUrl = 'https://api.twitter.com/oauth/access_token';
   var profileUrl = 'https://api.twitter.com/1.1/users/show.json?screen_name=';
 
-  var callback = 'http://127.0.0.1:3000/auth/twitter';
+  var callback = 'http://127.0.0.1:9000';
   var consumer_key= config.twitterConsumerKey;
   var consumer_secret = config.twitterClientSecret;
 
   // Part 1 of 2: Initial request from Satellizer.
   if (!req.body.oauth_token || !req.body.oauth_verifier) {
     var requestTokenOauth = {
-      callback: 'http://127.0.0.1:3000/auth/twitter',
+      callback: 'http://127.0.0.1:9000',
       consumer_key: config.twitterConsumerKey,
       consumer_secret: config.twitterClientSecret
     };
@@ -123,12 +180,14 @@ function twitterSignin(req, res, next) {
       // Step 2. Send OAuth token back to open the authorization screen.
       res.send(oauthToken);
     });
+
   } else {
+
     var accessTokenOauth = {
       consumer_key: consumer_key,
       consumer_secret: consumer_secret,
-      token: req.query.oauth_token,
-      verifier: req.query.oauth_verifier
+      token: req.body.oauth_token,
+      verifier: req.body.oauth_verifier
     };
 
     // Step 3. Exchange oauth token and oauth verifier for access token.
@@ -141,6 +200,7 @@ function twitterSignin(req, res, next) {
         consumer_secret: consumer_secret,
         oauth_token: accessToken.oauth_token
       };
+      console.log(JSON.stringify(accessToken));
 
       request.get({
         url: profileUrl + accessToken.screen_name,
@@ -151,11 +211,12 @@ function twitterSignin(req, res, next) {
       if (req.header('Authorization')) {
         User.findOne({ twitterId: profile.id }, function(err, existingUser) {
           if (existingUser) {
+            console.log(JSON.stringify(existingUser))
             return res.status(409).send({ message: 'There is already a Twitter account that belongs to you' });
           }
 
           var token = req.header('Authorization').split(' ')[1];
-          var payload = jwt.decode(token, config.TOKEN_SECRET);
+          var payload = jwt.decode(token, config.tokenSecret);
 
           User.findById(payload.sub, function(err, user) {
             if (!user) {
@@ -165,18 +226,18 @@ function twitterSignin(req, res, next) {
             user.twitterId = profile.id;
             user.userame = profile.screen_name;
             user.save(function(err) {
-              res.send({ token: createJWT(user) });
+              res.send({ token: createToken(user), user: user });
             });
           });
         });
       } else {
+        console.log(profile);
         var user = {
           twitterId: profile.id,
           username: profile.screen_name,
-          accessToken: access_token
         };
 
-        var query =  { twitterId: user.githubId };
+        var query =  { twitterId: user.twitterId };
 
         var options = { upsert: true, new: true };
 

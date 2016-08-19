@@ -47,15 +47,15 @@
     $locationProvider.html5Mode(true);
     $authProvider.github({
       clientId: '8eeaab0ee8e8495d69f6',
-      redirectUri: 'http://localhost:9000/',
-      url: 'http://localhost:3000/auth/github'
+      redirectUri: 'http://127.0.0.1:9000/',
+      url: 'http://127.0.0.1:3000/auth/github'
     });
 
     $authProvider.twitter({
-      url: 'http://localhost:3000/auth/twitter'
+      url: 'http://127.0.0.1:3000/auth/twitter',
+      redirectUri: 'http://127.0.0.1:9000'
     });
 
-    $authProvider.httpInterceptor = function() { return true; };
   }
 
   runFn.$inject = ['$rootScope', '$window', '$auth'];
