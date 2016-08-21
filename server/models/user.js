@@ -7,7 +7,8 @@ var userSchema = new Schema({
   githubId: String,
   twitterId: String,
   email: String,
-  accessToken: String
+  accessToken: String,
+  userPrefix: String
 });
 
 mongoose.model('User', userSchema);

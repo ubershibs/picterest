@@ -47,7 +47,8 @@
         return 'Everyone';
       } else if (re.test(path)) {
         var array = path.split('/');
-        return array[2];
+        var name = array[2].substr(2);
+        return name;
       }
     }
     function addPicModal() {

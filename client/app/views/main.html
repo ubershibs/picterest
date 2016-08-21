@@ -6,7 +6,10 @@
           <md-card-title-text>
             <div class="md-headline">{{ pic.title }}</div>
             <div layout="row" layout-align="start center">
-              <span class="md-subhead"><a ng-href="/user/{{ pic.posters[0].username }}">{{ pic.posters[0].username }}</a></span>
+              <span class="md-subhead"><a ng-href="/user/{{ pic.posters[0].userPrefix }}{{ pic.posters[0].username }}">
+                <i class="fa fa-github" ng-show="pic.posters[0].githubId.length > 0"></i>
+                <i class="fa fa-twitter" ng-show="pic.posters[0].twitterId.length > 0"></i>
+                {{ pic.posters[0].username }}</a></span>
               <md-button class="md-icon-button" ng-show="pic.liked === false" ng-click="vm.likeThis(pic, $event)">
                 <md-icon>favorite</md-icon>
                 <md-tooltip>Like This</md-tooltip>

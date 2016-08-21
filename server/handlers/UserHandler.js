@@ -6,6 +6,11 @@ var jwt = require('jwt-simple');
 var request = require('request');
 var qs = require('querystring');
 
+var tokenSecret = process.env.TOKEN_SECRET;
+var githubSecret = process.env.GITHUB_SECRET;
+var twitterKey = process.env.TWITTER_KEY;
+var twitterSecret = process.env.TWITTER_SECRET;
+var frontEndUri = process.env.FRONT_END_URI;
 var service = {
   isAuthenticated: isAuthenticated,
   createToken: createToken,
@@ -25,7 +30,7 @@ function isAuthenticated(req, res, next) {
 
 	var header = req.headers.authorization.split(' ');
 	var token = header[1];
-	var payload = jwt.decode(token, process.env.TOKEN_SECRET);
+	var payload = jwt.decode(token, tokenSecret);
 	var now = moment().unix();
 
 	if (now > payload.exp) {
@@ -50,7 +55,7 @@ function createToken(user) {
     sub: user._id
   };
 
-  return jwt.encode(payload, process.env.TOKEN_SECRET);
+  return jwt.encode(payload, tokenSecret);
 }
 
 // Signs a user in via Github and creates or returns an account
@@ -60,7 +65,7 @@ function githubSignin(req, res, next) {
   var params = {
     code: req.body.code,
     client_id: req.body.clientId,
-    client_secret: process.env.GITHUB_SECRET,
+    client_secret: githubSecret,
     redirect_uri: req.body.redirectUri
   };
 
@@ -79,13 +84,14 @@ function githubSignin(req, res, next) {
             return res.status(409).send({ message: 'There is already a GitHub account that belongs to you' });
           }
           var token = req.header('Authorization').split(' ')[1];
-          var payload = jwt.decode(token, process.env.TOKEN_SECRET);
+          var payload = jwt.decode(token, tokenSecret);
           User.findById(payload.sub, function(err, user) {
             if (!user) {
               return res.status(400).send({ message: 'User not found' });
             }
             user.githubId = profile.id;
             user.username = profile.login;
+            user.userPrefix = 'g-'
             user.save(function() {
               var token = createToken(user);
               res.send({ token: token, user: user });
@@ -102,6 +108,7 @@ function githubSignin(req, res, next) {
           var user = new User();
           user.githubId = profile.id;
           user.username = profile.login;
+          user.userPrefix = 'g-'
           user.save(function() {
             var token = createToken(user);
             res.send({ token: token, user: user });
@@ -118,90 +125,91 @@ function twitterSignin(req, res, next) {
   var accessTokenUrl = 'https://api.twitter.com/oauth/access_token';
   var profileUrl = 'https://api.twitter.com/1.1/users/show.json?screen_name=';
 
-  var callback = process.env.FRONT_END_URI;
-  var consumer_key= process.env.TWITTER_KEY;
-  var consumer_secret = process.env.TWITTER_SECRET;
+     // Part 1 of 2: Initial request from Satellizer.
+     if (!req.body.oauth_token || !req.body.oauth_verifier) {
+       var requestTokenOauth = {
+         callback: frontEndUri,
+         consumer_key: process.env.TWITTER_KEY ,
+         consumer_secret: process.env.TWITTER_SECRET
+       };
 
-  // Part 1 of 2: Initial request from Satellizer.
-  if (!req.body.oauth_token || !req.body.oauth_verifier) {
-    var requestTokenOauth = {
-      callback: process.env.FRONT_END_URI,
-      consumer_key: process.env.TWITTER_KEY,
-      consumer_secret: process.env.TWITTER_SECRET
-    };
+       // Step 1. Obtain request token for the authorization popup.
+       request.post({ url: requestTokenUrl, oauth: requestTokenOauth }, function(err, response, body) {
+         var oauthToken = qs.parse(body);
 
-    // Step 1. Obtain request token for the authorization popup.
-    request.post({ url: requestTokenUrl, oauth: requestTokenOauth }, function(err, response, body) {
-      var oauthToken = qs.parse(body);
+         // Step 2. Send OAuth token back to open the authorization screen.
+         res.send(oauthToken);
+       });
 
-      // Step 2. Send OAuth token back to open the authorization screen.
-      res.send(oauthToken);
-    });
+     } else {
 
-  } else {
+       var accessTokenOauth = {
+         consumer_key: process.env.TWITTER_KEY ,
+         consumer_secret: process.env.TWITTER_SECRET,
+         token: req.body.oauth_token,
+         verifier: req.body.oauth_verifier
+       };
 
-    var accessTokenOauth = {
-      consumer_key: consumer_key,
-      consumer_secret: consumer_secret,
-      token: req.body.oauth_token,
-      verifier: req.body.oauth_verifier
-    };
+       // Step 3. Exchange oauth token and oauth verifier for access token.
+       request.post({url: accessTokenUrl, oauth: accessTokenOauth}, function(err, response, accessToken) {
 
-    // Step 3. Exchange oauth token and oauth verifier for access token.
-    request.post({url: accessTokenUrl, oauth: accessTokenOauth}, function(err, response, accessToken) {
+         accessToken = qs.parse(accessToken);
 
-      accessToken = qs.parse(accessToken);
+         var profileOauth = {
+           consumer_key: process.env.TWITTER_KEY,
+           consumer_secret: process.env.TWITTER_SECRET,
+           oauth_token: accessToken.oauth_token
+         };
+         console.log(JSON.stringify(accessToken));
 
-      var profileOauth = {
-        consumer_key: consumer_key,
-        consumer_secret: consumer_secret,
-        oauth_token: accessToken.oauth_token
-      };
+         request.get({
+           url: profileUrl + accessToken.screen_name,
+           oauth: profileOauth,
+           json: true
+         }, function(err ,response, profile) {
 
-      request.get({
-        url: profileUrl + accessToken.screen_name,
-        oauth: profileOauth,
-        json: true
-      }, function(err ,response, profile) {
+         if (req.header('Authorization')) {
+           User.findOne({ twitterId: profile.id }, function(err, existingUser) {
+             if (existingUser) {
+               console.log(JSON.stringify(existingUser))
+               return res.status(409).send({ message: 'There is already a Twitter account that belongs to you' });
+             }
 
-      if (req.header('Authorization')) {
-        User.findOne({ twitterId: profile.id }, function(err, existingUser) {
-          if (existingUser) {
-            return res.status(409).send({ message: 'There is already a Twitter account that belongs to you' });
-          }
+             var token = req.header('Authorization').split(' ')[1];
+             var payload = jwt.decode(token, process.env.TOKEN_SECRET);
 
-          var token = req.header('Authorization').split(' ')[1];
-          var payload = jwt.decode(token, process.env.TOKEN_SECRET);
+             User.findById(payload.sub, function(err, user) {
+               if (!user) {
+                 return res.status(400).send({ message: 'User not found' });
+               }
 
-          User.findById(payload.sub, function(err, user) {
-            if (!user) {
-              return res.status(400).send({ message: 'User not found' });
-            }
+               user.twitterId = profile.id;
+               user.userame = profile.screen_name;
+               user.userPrefix = 't-'
+               user.save(function(err) {
+                 res.send({ token: createToken(user), user: user });
+               });
+             });
+           });
+         } else {
+           console.log(profile);
+           var user = {
+             twitterId: profile.id,
+             username: profile.screen_name,
+             userPrefix: 't-'
+           };
 
-            user.twitterId = profile.id;
-            user.userame = profile.screen_name;
-            user.save(function(err) {
-              res.send({ token: createToken(user), user: user });
-            });
-          });
-        });
-      } else {
-        var user = {
-          twitterId: profile.id,
-          username: profile.screen_name,
-        };
+           var query =  { twitterId: user.twitterId };
 
-        var query =  { twitterId: user.twitterId };
+           var options = { upsert: true, new: true };
 
-        var options = { upsert: true, new: true };
-
-        // Step 4. Create or update a user account
-        User.findOneAndUpdate(query, user, options).exec(function(err, result) {
-          var token = createToken(result);
-          res.send({ token: token, user: result });
-        });
-      }
-    });
-  });
-}
-}
+           // Step 4. Create or update a user account
+           User.findOneAndUpdate(query, user, options).exec(function(err, result) {
+             var token = createToken(result);
+             res.send({ token: token, user: result });
+           });
+         }
+       });
+     });
+   }
+   }

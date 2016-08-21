@@ -17,7 +17,7 @@
     var vm = this;
     vm.pics = [];
     vm.user = null;
-    vm.poster = $routeParams.username;
+    vm.poster = $routeParams.username.substr(2);
     vm.getUserPics = getUserPics;
     vm.likeThis = likeThis;
     vm.isAuthenticated = isAuthenticated;

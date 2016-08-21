@@ -1,9 +1,7 @@
 var mongoose = require('mongoose');
 var gracefulShutdown;
-var dbURI = 'mongodb://localhost/picterest';
-if (process.env.NODE_ENV === 'production') {
-  dbURI = process.env.MONGODB_URI;
-}
+var  dbURI = process.env.MONGODB_URI;
+
 
 mongoose.connect(dbURI);
 

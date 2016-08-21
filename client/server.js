@@ -1,14 +1,22 @@
 'use strict';
-var path = require('path');
 var express = require('express');
 var logger = require('morgan');
 
 var app = express();
-
 app.use(logger('dev'));
-app.use(express.static('dist'));
-//app.use('/bower_components', express.static('bower_components'));
 
+app.use(express.static('dist'));
+
+app.use('/scripts', express.static('scripts'));
+app.use('/styles', express.static('styles'));
+app.use('/images', express.static('images'));
+app.use('/views', express.static('views'));
+
+
+app.all('/*', function(req, res, next) {
+    // Just send the index.html for other files to support HTML5Mode
+    res.sendFile('index.html', { root: __dirname + '/dist'});
+});
 
 
 // error handlers

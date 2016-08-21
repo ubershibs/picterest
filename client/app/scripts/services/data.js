@@ -16,6 +16,7 @@
   DataService.$inject = ['$http', '$window', '$auth', '$q'];
 
   function DataService($http, $window, $auth, $q) {
+    var backEnd = 'http://picterest-backend.herokuapp.com';
     var pics = [];
     var statusMessage = null;
     var service = {
@@ -35,7 +36,11 @@
 
     function getAllThePics() {
       return $q(function(resolve, reject) {
-        $http.get('http://picterest-backend.herokupapp.com/api/pics').then(function(result) {
+        $http({
+          method: 'GET',
+          url: backEnd + '/api/pics'
+        })
+        .then(function(result) {
           var picArray = setTileSpan(result.data);
           picArray = isLiked(picArray);
           pics = isReposter(picArray);
@@ -48,7 +53,11 @@
 
     function getUserPics(username) {
       return $q(function(resolve, reject) {
-        $http.get('http://picterest-backend.herokupapp.com/api/pics/' + username).then(function(result) {
+        $http({
+          method: 'GET',
+          url: backEnd + '/api/pics/' + username
+        })
+        .then(function(result) {
           var picArray = setTileSpan(result.data);
           picArray = isLiked(picArray);
           pics = isReposter(picArray);
@@ -66,7 +75,12 @@
         title: title,
         ratio: ratio
       };
-      $http.post('http://picterest-backend.herokupapp.com/api/pics', body).then(function(response) {
+      $http({
+        method: 'POST',
+        url: backEnd + '/api/pics',
+        data: body
+      })
+      .then(function(response) {
         if (response.data.type === 'dupe') {
           statusMessage = response.data.message;
         } else if (response.data.type === 'repost') {
@@ -83,7 +97,16 @@
     }
 
     function repostPic(pic, user) {
-      return $http.post('http://picterest-backend.herokupapp.com/api/pic/' + pic._id).then(function(response) {
+      var body = {
+        pic: pic,
+        user: user
+      };
+      return $http({
+        method: 'POST',
+        url: backEnd + '/api/pic/' + pic._id,
+        data: body
+      })
+      .then(function(response) {
         var newPic = '';
         if (response.data.type === 'dupe') {
           statusMessage = response.data.message;
@@ -115,12 +138,17 @@
     }
 
     function deleteThis(pic, user) {
-      $http.delete('http://picterest-backend.herokupapp.com/api/pic/' + pic._id).then(function(response) {
+      $http({
+        method: 'DELETE',
+        url: backEnd + '/api/pic/' + pic._id
+      })
+      .then(function(response) {
         statusMessage = response.data.message;
         var index = findIndex(pics, pic._id);
         pics.splice(index, 1);
       });
     }
+
     function like(pic, user) {
       return $q(function(resolve, reject) {
         var newPic;
@@ -128,51 +156,46 @@
           pic: pic,
           user: user
         };
-        $http.post('http://picterest-backend.herokupapp.com/api/pic/' + pic._id + '/like', body)
-          .then(function(response) {
-            statusMessage = response.data.message;
-            newPic = ratioMath(response.data.pic);
-            newPic.liked = true;
-            if ($auth.isAuthenticated() === true) {
-              var user = JSON.parse($window.localStorage.currentUser);
-              newPic = isReposterLogic(newPic, user);
-            } else {
-              newPic.reposter = false;
-            }
-            var index = findIndex(pics, newPic._id);
-            pics[index] = newPic;
-            resolve(newPic);
-          }, function(error) {
-            reject(error);
-          });
+        $http.post(backEnd + '/api/pic/' + pic._id + '/like', body)
+        .then(function(response) {
+          statusMessage = response.data.message;
+          newPic = ratioMath(response.data.pic);
+          newPic.liked = true;
+          if ($auth.isAuthenticated() === true) {
+            var user = JSON.parse($window.localStorage.currentUser);
+            newPic = isReposterLogic(newPic, user);
+          } else {
+            newPic.reposter = false;
+          }
+          var index = findIndex(pics, newPic._id);
+          pics[index] = newPic;
+          resolve(newPic);
+        }, function(error) {
+          reject(error);
+        });
       });
     }
 
     function unlike(pic, user) {
       return $q(function(resolve, reject) {
         var newPic;
-        var body = {
-          pic: pic,
-          user: user
-        };
-        $http.delete('http://picterest-backend.herokupapp.com/api/pic/' + pic._id + '/like')
-          .then(function(response) {
-            statusMessage = response.data.message;
-            newPic = ratioMath(response.data.pic);
-            newPic.liked = false;
-            if ($auth.isAuthenticated() === true) {
-              var user = JSON.parse($window.localStorage.currentUser);
-              newPic = isReposterLogic(newPic, user);
-            } else {
-              newPic.reposter = false;
-            }
-            console.log(newPic);
-            var index = findIndex(pics, newPic._id);
-            pics[index] = newPic;
-            resolve(newPic);
-          }, function(error) {
-            reject(error);
-          });
+        $http.delete(backEnd + '/api/pic/' + pic._id + '/like')
+        .then(function(response) {
+          statusMessage = response.data.message;
+          newPic = ratioMath(response.data.pic);
+          newPic.liked = false;
+          if ($auth.isAuthenticated() === true) {
+            var user = JSON.parse($window.localStorage.currentUser);
+            newPic = isReposterLogic(newPic, user);
+          } else {
+            newPic.reposter = false;
+          }
+          var index = findIndex(pics, newPic._id);
+          pics[index] = newPic;
+          resolve(newPic);
+        }, function(error) {
+          reject(error);
+        });
       });
     }
 

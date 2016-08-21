@@ -22,6 +22,9 @@
     appConfig.$inject = ['$routeProvider', '$authProvider', '$mdThemingProvider', '$locationProvider'];
 
   function appConfig($routeProvider, $authProvider, $mdThemingProvider, $locationProvider) {
+
+    var backEnd = 'http://picterest-backend.herokuapp.com';
+
     $mdThemingProvider.theme('default')
       .primaryPalette('grey')
       .accentPalette('cyan')
@@ -47,11 +50,11 @@
     $authProvider.github({
       clientId: '8eeaab0ee8e8495d69f6',
       redirectUri: 'http://ubershibs-picterest.herokuapp.com',
-      url: 'http://picterest-backend.herokupapp.com/auth/github'
+      url: backEnd + '/auth/github'
     });
 
     $authProvider.twitter({
-      url: 'http://picterest-backend.herokupapp.com/auth/twitter',
+      url: backEnd + '/auth/twitter',
       redirectUri: 'http://ubershibs-picterest.herokuapp.com'
     });
 

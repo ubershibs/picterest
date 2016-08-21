@@ -30,7 +30,7 @@ function postPic(req, res, next) {
   var image = req.body.image;
   var title = req.body.title;
   var ratio = req.body.ratio;
-
+  console.log(JSON.stringify(req.body));
   Pic.findOne({ url: image }).populate('posters').exec(function(err, result) {
     if (err) { return next(err); }
     // Find out if user has already posted this image
@@ -78,8 +78,8 @@ function repostPic(req, res, next) {
 
 function likePic(req, res, next) {
   var user = req.user;
-  var pic = req.body.pic;
-  Pic.findOneAndUpdate({ _id: pic._id }, { $push: { likers: user._id }}, { new: true })
+  var pic = req.params.id;
+  Pic.findOneAndUpdate({ _id: pic }, { $push: { likers: user._id }}, { new: true })
     .populate('posters')
     .exec(function(err, result) {
       if (err) { return next(err); }

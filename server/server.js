@@ -1,31 +1,23 @@
 'use strict';
-var path = require('path');
 var express = require('express');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
-var compress = require('compression');
 var cors = require('cors');
 
 require('./models/db');
 var routes = require('./routes/index.js');
 
 var app = express();
-
-var options = {
-  origin: 'http://ubershibs-picterest.herokuapp.com'
-}
-app.use(cors(options));
-app.use(compress());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cors({ credentials: false, origin: 'http://ubershibs-picterest.herokuapp.com' }));
 app.use('/', routes);
-
 // error handlers
 
 // Catch unauthorised errors
 app.use(function (err, req, res, next) {
   if (err.name === 'UnauthorizedError') {
-    res.status(401).json({"message" : err.name + ": " + err.message});
+    res.sendStatus(401).json({"message" : err.name + ": " + err.message});
   } else {
     next(err);
   }
