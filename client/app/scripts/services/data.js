@@ -19,6 +19,7 @@
     var backEnd = 'http://picterest-backend.herokuapp.com';
     var pics = [];
     var statusMessage = null;
+    var currentUser = null;
     var service = {
       getAllThePics: getAllThePics,
       getUserPics: getUserPics,
@@ -29,7 +30,8 @@
       clearStatusMessage: clearStatusMessage,
       deleteThis: deleteThis,
       like: like,
-      unlike: unlike
+      unlike: unlike,
+      getUser: getUser
     };
 
     return service;
@@ -51,11 +53,13 @@
       });
     }
 
-    function getUserPics(username) {
+    function getUserPics(comboName) {
       return $q(function(resolve, reject) {
+        var prefix = comboName.substr(0, 2);
+        var username = comboName.substr(2);
         $http({
           method: 'GET',
-          url: backEnd + '/api/pics/' + username
+          url: backEnd + '/api/pics/' + prefix + '/' + username
         })
         .then(function(result) {
           var picArray = setTileSpan(result.data);
@@ -81,16 +85,24 @@
         data: body
       })
       .then(function(response) {
+        currentUser = JSON.parse($window.localStorage.currentUser);
         if (response.data.type === 'dupe') {
           statusMessage = response.data.message;
         } else if (response.data.type === 'repost') {
           statusMessage = response.data.message;
           newPic = ratioMath(response.data.pic);
+          if (newPic.likers.indexOf(currentUser._id) !== -1 ) {
+            newPic.isLiked = true;
+          } else {
+            newPic.isLiked = false;
+          }
           var index = findIndex(pics, newPic._id);
           pics[index] = newPic;
         } else if (response.data.type === 'new') {
           statusMessage = response.data.message;
           newPic = ratioMath(response.data.pic);
+          newPic.isLiked = false;
+          newPic.isReposter = false;
           pics.push(newPic);
         }
       });
@@ -115,7 +127,7 @@
           newPic = ratioMath(response.data.pic);
           var index = findIndex(pics, newPic._id);
           newPic.reposter = true;
-          if (newPic.likers.indexOf(user) > -1) {
+          if (newPic.likers.indexOf(user._id) > -1) {
             newPic.liked = true;
           } else {
             newPic.liked = false;
@@ -193,6 +205,20 @@
           var index = findIndex(pics, newPic._id);
           pics[index] = newPic;
           resolve(newPic);
+        }, function(error) {
+          reject(error);
+        });
+      });
+    }
+
+    function getUser(comboName) {
+      return $q(function(resolve, reject) {
+        var prefix = comboName.substr(0, 2);
+        var username = comboName.substr(2);
+        $http.get(backEnd + '/api/user/' + prefix + '/' + username)
+        .then(function(response) {
+          var user = response.data.user;
+          resolve(user);
         }, function(error) {
           reject(error);
         });

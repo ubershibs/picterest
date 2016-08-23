@@ -4,21 +4,21 @@
       <h2>Add a picture</h2>
     </div>
   </md-toolbar>
-  <div class="add-dialog-content">
-    <div layout="row" >
+  <div class="add-dialog-pic">
+    <div layout="row">
       <div ng-show="ctrl.imgSrc" class="preview"><img ng-src="{{ ctrl.imgSrc }}" class="preview" err-src="images/images.png" /></div>
       <div ng-hide="ctrl.imgSrc" id="addPicImage" flex>
         <span>Image Preview</span>
       </div>
     </div>
   </div>
-  <div layout="column" class="add-dialog-content">
-    <form name="addPic">
+  <div layout="column" class="add-dialog-content" layout-fill>
+    <form name="addPic" class="addPicForm">
       <md-input-container class="md-block">
         <label for="imgSrc">Image URL</label>
         <input id="imgSrc" ng-model="ctrl.imgSrc" name="imgSrc" required>
         <div ng-messages="addPic.imgSrc.$error">
-          <div ng-message="required">A title is required.</div>
+          <div ng-message="required">A URL is required.</div>
        </div>
       </md-input-container>
       <md-input-container class="md-block">
@@ -28,14 +28,28 @@
           <div ng-message="required">A title is required.</div>
        </div>
       </md-input-container>
-      <div layout="row">
-        <md-button flex class="md-accent add-dialog-button" ng-click="ctrl.savePic(ctrl.imgSrc, imgTitle)">
+      <div layout="row" class="add-dialog-button">
+        <md-button flex-xs="50" flex-gt-xs class="md-accent" ng-click="ctrl.savePic(ctrl.imgSrc, imgTitle)" id="imgSave">
           Save
         </md-button>
-        <md-button class="md-warn" flex="25" ng-click="ctrl.closeDialog()">
+        <md-button class="md-warn" flex-xs="50" flex-gt-xs="25" ng-click="ctrl.closeDialog()">
           Cancel
         </md-button>
       </div>
     </form>
   </div>
+  <script>
+  $('#imgSrc').on("keypress", function(e) {
+    var code = e.keyCode || e.which;
+    if(code == 13) { //Enter keycode
+      $('#imgSave').trigger('click');
+    }
+  });
+  $('#imgTitle').on("keypress", function(e) {
+    var code = e.keyCode || e.which;
+    if(code == 13) { //Enter keycode
+      $('#imgSave').trigger('click');
+    }
+  });
+</script>
 </div>

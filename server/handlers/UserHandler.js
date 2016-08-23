@@ -15,12 +15,20 @@ var service = {
   isAuthenticated: isAuthenticated,
   createToken: createToken,
   githubSignin: githubSignin,
-  twitterSignin: twitterSignin
+  twitterSignin: twitterSignin,
+  getUserInfo: getUserInfo
 }
 
 module.exports = service;
 
 //////////////////////
+
+function getUserInfo(req, res, next) {
+  User.findOne({ userPrefix: req.params.prefix, username: req.params.username }).exec(function(err, result) {
+    if (err) { return next(err); }
+    return res.status(200).json({ user: result });
+  })
+}
 
 // Determines whether or not a user is authenticated
 function isAuthenticated(req, res, next) {
@@ -100,7 +108,7 @@ function githubSignin(req, res, next) {
         });
       } else {
         // Step 3b. Create a new user account or return an existing one.
-        User.findOne({ github: profile.id }, function(err, existingUser) {
+        User.findOne({ githubId: profile.id }, function(err, existingUser) {
           if (existingUser) {
             var token = createToken(existingUser);
             return res.send({ token: token, user: existingUser });

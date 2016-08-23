@@ -66,7 +66,7 @@
         position: position,
         trapFocus: true,
         zIndex: 150,
-        clickOutsideToClose: true,
+        clickOutsideToClose: false,
         escapeToClose: true,
         focusOnOpen: true
       };

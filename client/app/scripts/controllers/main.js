@@ -44,6 +44,10 @@
       }
     });
 
+    function deleteThis(pic) {
+      DataService.deleteThis(pic, vm.user);
+    }
+
     function showToast(message) {
       $mdToast.show(
         $mdToast.simple()

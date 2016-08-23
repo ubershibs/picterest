@@ -17,24 +17,25 @@
     var vm = this;
     vm.pics = [];
     vm.user = null;
-    vm.poster = $routeParams.username.substr(2);
+    vm.poster = null;
     vm.getUserPics = getUserPics;
     vm.likeThis = likeThis;
     vm.isAuthenticated = isAuthenticated;
     vm.showToast = showToast;
-    vm.isOwnPage = false;
+    vm.isOwnPage = null;
     vm.deleteThis = deleteThis;
     vm.unlikeThis = unlikeThis;
     vm.repostThis = repostThis;
 
     (function init() {
       vm.pics = [];
-      vm.getUserPics(vm.poster);
+      vm.getUserPics($routeParams.username);
+      vm.poster = DataService.getUser($routeParams.username);
       if (isAuthenticated) {
         vm.user = JSON.parse($window.localStorage.currentUser);
-      }
-      if (vm.user.username === vm.poster) {
-        vm.isOwnPage = true;
+        if ($routeParams.username === vm.user.userPrefix + vm.user.username) {
+          vm.isOwnPage = true;
+        }
       }
     })();
 
@@ -49,6 +50,8 @@
         vm.showToast(newValue);
       }
     });
+
+
 
     function showToast(message) {
       $mdToast.show(

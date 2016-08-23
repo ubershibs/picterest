@@ -98,7 +98,7 @@ function unlikePic(req, res, next) {
 };
 
 function getUserPics(req, res, next) {
-  User.findOne({ username: req.params.username }).exec(function(err, result) {
+  User.findOne({ username: req.params.username, userPrefix: req.params. prefix }).exec(function(err, result) {
     var uid = result._id;
     Pic.find({ posters: uid }).populate('posters').exec(function(err, result) {
       if (err) { return next(err); }
