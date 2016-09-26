@@ -3,9 +3,7 @@
 
 /* Picterest styles */
 body {
-  height: 100%;
-  width: 100%;
-  position:relative;
+  background-color: #666666;
 }
 
 a {
@@ -66,13 +64,6 @@ a:hover {
 
 #addpic, #mypicsround, #allpicsround, #signoutround {
   font-size: 30px;
-}
-
-.main {
-  height: 100%;
-  width: 100%;
-  position: relative;
-  background-color: #666666;
 }
 
 .addPicDialog {
@@ -213,4 +204,8 @@ i {
   position: fixed;
   bottom: 5px;
   right: 5px;
+}
+
+.pic-card {
+  margin: 10px !important;
 }

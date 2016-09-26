@@ -17,6 +17,7 @@
 
   function DataService($http, $window, $auth, $q) {
     var backEnd = 'http://picterest-backend.herokuapp.com';
+
     var pics = [];
     var statusMessage = null;
     var currentUser = null;
@@ -33,7 +34,34 @@
       unlike: unlike,
       getUser: getUser
     };
-
+    /* for local testing:
+    var pics = [
+      {
+        _id: '57b8f1a694567d030078d378',
+        title: 'Donald Trump looking hot',
+        url: 'http://img.wonkette.com/wp-content/uploads/2016/08/nbc-fires-donald-trump-after-he-calls-mexicans-rapists-and-drug-runners.jpg',
+        ratio: 1.3333333333333333,
+        __v: 0,
+        likers: [ '57b8ebabfb913f03003b272a', '57b908c8134a05d391588cca', '57bc135e551eb10300515b6f' ],
+        posters: [
+          { _id: '57b908c8134a05d391588cca', 'twitterId': '1308641', 'userPrefix': 't-', 'username': 'ubershibs', '__v': 0 },
+          { _id: '57b8ebabfb913f03003b272a', 'userPrefix': 'g-', 'username': 'ubershibs', 'githubId': '11529476', '__v': 0 },
+          { _id: '57bc135e551eb10300515b6f', 'userPrefix': 'g-', 'username': 'smendoza787', 'githubId': '17697950', '__v': 0 }
+        ]
+      },
+      {
+        _id: '57b8fa7894567d030078d37a', 'title': 'Hillary looking fine',
+        url: 'http://www.trbimg.com/img-56bbba2f/turbine/ct-hillary-clinton-speeches-0209-jm-20160208-001/650/650x366',
+        ratio:1.7759562841530054,
+        __v: 0,
+        likers: ['57b8ebabfb913f03003b272a', '57d22e813f49d203008f7bfc'],
+        posters: [
+          { _id: '57b908c8134a05d391588cca', 'twitterId': '1308641', 'userPrefix': 't-', 'username': 'ubershibs', '__v': 0 },
+          { _id: '57d22e813f49d203008f7bfc', 'userPrefix': 'g-', 'username': 'bobbrady', 'githubId': '9534794', '__v': 0 }
+        ]
+      }
+    ];
+    */
     return service;
 
     function getAllThePics() {
@@ -53,6 +81,17 @@
       });
     }
 
+    /* For testing locally:
+    function getAllThePics() {
+      return $q(function(resolve, reject) {
+        console.log('Pics:' + JSON.stringify(pics));
+        var picArray = setTileSpan(pics);
+        picArray = isLiked(picArray);
+        pics = isReposter(picArray);
+        resolve(pics);
+      });
+    }
+    */
     function getUserPics(comboName) {
       return $q(function(resolve, reject) {
         var prefix = comboName.substr(0, 2);

@@ -1,8 +1,8 @@
 <div layout="column" flex="grow" layout-padding>
   <div ng-hide="vm.pics.length === 0" layout="column" layout-fill>
-    <md-grid-list md-cols-xs="2"  md-cols-sm="6" md-cols-md="8" md-cols-lg="10" md-cols-xl="12" md-gutter="1em" md-row-height="13:16" flex>
+    <md-grid-list md-cols-xs="2"  md-cols-sm="6" md-cols-md="8" md-cols-lg="10" md-cols-xl="12" md-gutter="2em" md-row-height="13:16" flex>
       <md-grid-tile ng-repeat="pic in vm.pics" md-colspan-xs="2" md-colspan="{{ pic.colSpan }}" md-rowspan="{{ pic.rowSpan }}" layout-padding>
-        <md-card md-whiteframe="10" ng-hide="vm.pics.length === 0" layout-padding  class="grid-item">
+        <md-card md-whiteframe="10" ng-hide="vm.pics.length === 0" layout-padding class="grid-item pic-card">
           <md-card-title-text>
             <div class="md-headline">{{ pic.title }}</div>
             <div layout="row" layout-align="start center">
@@ -35,7 +35,7 @@
             </div>
           </md-card-title-text>
           <div layout="row" layout-align="center center">
-            <img ng-src="{{ pic.url }}" err-src="images/image.png" class="md-card-image" alt="{{ pic.title }}"/>
+            <img ng-src="{{ pic.url }}" err-src="images/image.png" md-lightbox class="md-card-image" alt="{{ pic.title }}"/>
           </div>
         </md-card>
       </md-grid-tile>

@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="styles/main.css">
 
   </head>
-  <body ng-app="picterestApp" ng-cloak layout-column layout-fill>
+  <body ng-app="picterestApp" ng-cloak>
     <!--[if lte IE 8]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
@@ -68,18 +68,15 @@
             <md-tooltip>All Pics</md-tooltip>
           </md-button>
           <md-button id="signoutround" class="md-fab md-mini fa fa-power-off" aria-label="Sign Out" ng-click="ctrl.logout()">
-            <md-tooltip>Sign Out</md-toolbar>
+            <md-tooltip>Sign Out</md-tooltip>
           </md-button>
         </span>
       </div>
     </md-toolbar>
-    <md-content layout-gt-xs="row" layout="col" class="main" flex>
-      <div ng-view layout="row" flex layout-align="start start">
-
-      </div>
+    <md-content layout-gt-xs="row" layout="col" flex ng-view layout-align="start start">
     </md-content>
     <div id="about">
-      Find out more about this site and see the code on <a href="https://github.com/ubershibs/picterest">Github</a>.
+      This site works best with a recent version of Chrome, Safari, or Microsoft Edge. Find out more about this site and see the code on <a href="https://github.com/ubershibs/picterest">Github</a>.
     </div>
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
      <script>
@@ -113,6 +110,7 @@
         <script src="scripts/controllers/navigation.js"></script>
         <script src="scripts/controllers/userboard.js"></script>
         <script src="scripts/directives/errsrc.js"></script>
+        <script src="scripts/directives/mdlightbox.js"></script>
         <!-- endbuild -->
         <script src="https://use.fontawesome.com/9cbd10f37a.js"></script>
 

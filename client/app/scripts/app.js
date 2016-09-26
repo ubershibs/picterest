@@ -15,7 +15,8 @@
       'ngRoute',
       'ngSanitize',
       'ngMaterial',
-      'satellizer'
+      'satellizer',
+      'mdLightbox'
     ])
     .config(appConfig)
     .run(runFn);

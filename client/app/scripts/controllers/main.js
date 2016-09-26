@@ -30,6 +30,7 @@
       if (isAuthenticated()) {
         vm.user = JSON.parse($window.localStorage.currentUser);
       }
+      console.log(vm.pics);
     })();
 
     $scope.$watch(function() { return DataService.getCurrentPics(); }, function(newValue, oldValue) {

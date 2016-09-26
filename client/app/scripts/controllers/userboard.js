@@ -51,8 +51,6 @@
       }
     });
 
-
-
     function showToast(message) {
       $mdToast.show(
         $mdToast.simple()
