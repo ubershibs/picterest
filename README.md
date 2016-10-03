@@ -3,6 +3,14 @@
 ## What this is
 I built this site as the final project toward my back end development certification from Free Code Camp. It's a Pinterest clone. You can post pictures, they show up, you can like them/repost other user's pictures, or delete your own. That's about it. You can log in with either your Twitter or Github account.
 
+## Update - October 3, 2016
+I've done what I can to resolve a number of issues in various browsers, all stemming from my use of Angular Material as a UI framework. As far as I can tell, I've fixed the issues where:
+- the main content area was only 36px high in Firefox and Edge - it now fills the screen;
+- there were two scrollbars, one for the whole page, and one for the main content area - there is now only one for the main content area;
+- the boxes were overlapping at many different screen resolutions/on many devices - I've removed the padding on the cards, which I think actually makes them look significantly better, and set the 10px margin around each side as !important. There is still some overlapping on very rare occasions when I resize my browser and don't reload the page, but on most devices/in all browsers supported, there is very little overlap.
+
+Note: I have only tested modern evergreen browsers - Chrome, Safari, Firefox & Edge. I have not tested the site on any version of IE.
+
 ## Required User stories
 - User Story: As an unauthenticated user, I can login with Twitter.
 - User Story: As an authenticated user, I can link to images.

@@ -18,13 +18,13 @@
     <link rel="stylesheet" href="styles/main.css">
 
   </head>
-  <body ng-app="picterestApp" ng-cloak>
+  <body ng-app="picterestApp" ng-cloak style="overflow-y: hidden;">
     <!--[if lte IE 8]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
     <!-- Add your site or application content here -->
-    <md-toolbar layout="row" layout-xs="column" layout-align-xs="start center" ng-controller="NavigationCtrl as ctrl">
+    <md-toolbar md-scroll-shrink="false" layout="row" layout-xs="column" layout-align-xs="start center" ng-controller="NavigationCtrl as ctrl">
       <h1 hide-gt-xs>
         Picterest | {{ ctrl.title() }}
       </h1>
@@ -73,7 +73,7 @@
         </span>
       </div>
     </md-toolbar>
-    <div layout-gt-xs="row" layout="col" layout-fill ng-view layout-align="start start" class="scroll">
+    <div layout="row" layout-xs ="column" layout-fill ng-view>
     </div>
     <div id="about">
       This site works best with a recent version of Chrome, Safari, or Microsoft Edge. Find out more about this site and see the code on <a href="https://github.com/ubershibs/picterest">Github</a>.
