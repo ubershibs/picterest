@@ -16,7 +16,7 @@
   DataService.$inject = ['$http', '$window', '$auth', '$q'];
 
   function DataService($http, $window, $auth, $q) {
-    var backEnd = 'http://picterest-backend.herokuapp.com';
+    var backEnd = 'https://picterest-backend.herokuapp.com';
 
     var pics = [];
     var statusMessage = null;

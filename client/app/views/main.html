@@ -1,4 +1,13 @@
 <md-content flex md-scroll-y>
+  <md-whiteframe class="md-whiteframe-20dp warn" flex-sm="45" flex-gt-sm="35" flex-gt-md="25" layout="column" layout-padding layout-align="center center" ng-show="vm.pics.length === 0">
+    <p>If you're not seeing any pictures, please ensure you are visiting our site securely over HTTPS.</p>
+    <p>
+       <a class="underline" href="https://ubershibs-picterest.herokuapp.com">Click here for the secure site.</a>
+    </p>
+    <p>
+      If you are using the HTTPS version, pics should load any second.
+    </p>
+  </md-whiteframe>
   <md-grid-list md-cols-xs="2"  md-cols-sm="6" md-cols-md="8" md-cols-lg="10" md-cols-xl="12" md-gutter="2em" md-row-height="13:16" ng-hide="vm.pics.length === 0">
     <md-grid-tile ng-repeat="pic in vm.pics" md-colspan-xs="2" md-colspan="{{ pic.colSpan }}" md-rowspan="{{ pic.rowSpan }}" layout-padding>
       <md-card md-whiteframe="10" ng-hide="vm.pics.length === 0" class="grid-item pic-card">
